@@ -19,17 +19,17 @@
 
 %define kernelversion	2
 %define patchlevel	6
-%define sublevel	21
+%define sublevel	22
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		5
-%define kstable		0
+%define kpatch		0
+%define kstable		1
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		20
+%define rt_rel		3
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -87,7 +87,7 @@ only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org ker
 %define debug_package           %{nil}
 
 # build defines
-%define build_doc 1
+%define build_doc 0
 %define build_source 1
 %define build_devel 1
 
@@ -172,7 +172,7 @@ Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchl
 %endif
 
 # Mingos patches
-Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{ktag}%{rt_rel}
+Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{ktag}%{rt_rel}.patch
 
 #END
 ####################################################################
@@ -973,7 +973,6 @@ exit 0
 %{_kerneldir}/include/rxrpc
 %{_kerneldir}/include/keys
 %{_kerneldir}/include/rdma
-%{_kerneldir}/include/xen
 %{_kerneldir}/init
 %{_kerneldir}/ipc
 %{_kerneldir}/kernel
@@ -1045,7 +1044,6 @@ exit 0
 %{_up_develdir}/include/video
 %{_up_develdir}/include/media
 %{_up_develdir}/include/rxrpc
-%{_up_develdir}/include/xen
 %{_up_develdir}/init
 %{_up_develdir}/ipc
 %{_up_develdir}/kernel
@@ -1116,7 +1114,6 @@ exit 0
 %{_smp_develdir}/include/video
 %{_smp_develdir}/include/media
 %{_smp_develdir}/include/rxrpc
-%{_smp_develdir}/include/xen
 %{_smp_develdir}/init
 %{_smp_develdir}/ipc
 %{_smp_develdir}/kernel
@@ -1168,6 +1165,9 @@ exit 0
 %endif
 
 %changelog
-* Thu Jul 12 2007 Thomas Backlund <tmb@mandriva.org> 2.6.21.5-rt20.1mdv
+* Sat Jul 14 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.1mdv
 - Introduce Ingo Molnars kernel-rt (realtime) series
 - use kernel-mm spec and naming as base
+- use defconfigs from kernel-linus-2.6.22.1, and adapt them for
+  realtime build
+- dont build -doc rpms
