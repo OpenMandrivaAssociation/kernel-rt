@@ -32,7 +32,7 @@
 %define rt_rel		3
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -1182,6 +1182,12 @@ exit 0
 %endif
 
 %changelog
+* Sat Jul 15 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.2mdv
+- disable LOCKDEP and DEBUG_SLAB as they are bad for latencies and 
+  runtime overhead
+- fix build when building only up or sm
+- dont build -doc rpms
+
 * Sat Jul 14 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.1mdv
 - Introduce Ingo Molnars kernel-rt (realtime) series
 - use kernel-mm spec and naming as base
