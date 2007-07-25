@@ -29,10 +29,10 @@
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		3
+%define rt_rel		6
 
 # this is the releaseversion
-%define mdvrelease 	2
+%define mdvrelease 	1
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -92,7 +92,7 @@ only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org ker
 %define build_devel 1
 
 %define build_up 1
-%define build_smp 1
+%define build_smp 1 
 
 %define distro_branch %(perl -pe '/(\\d+)\\.(\\d)\\.?(\\d)?/; $_="$1.$2"' /etc/mandriva-release)
 
@@ -172,7 +172,11 @@ Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchl
 %endif
 
 # Mingos patches
+%if %kpatch
+Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.patch
+%else
 Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{ktag}%{rt_rel}.patch
+%endif
 
 #END
 ####################################################################
