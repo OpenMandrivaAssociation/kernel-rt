@@ -19,20 +19,20 @@
 
 %define kernelversion	2
 %define patchlevel	6
-%define sublevel	22
+%define sublevel	23
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		0
-%define kstable		1
+%define kpatch		rc2
+%define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		9
+%define rt_rel		2
 
 # this is the releaseversion
-%define mdvrelease 	2
+%define mdvrelease 	1
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -177,6 +177,10 @@ Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{kpa
 %else
 Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{ktag}%{rt_rel}.patch
 %endif
+
+# Steven Rostedt's patches
+Patch3:		fix_non_smp_compile_smp_stubs.patch
+Patch4:		add_missing_semicolon_in_percpu_list_h.patch 
 
 #END
 ####################################################################
@@ -476,6 +480,10 @@ pushd %src_dir
 
 # Mingo's patch
 %patch2 -p1
+
+# Steven Rostedt's patches
+%patch3 -p1
+%patch4 -p1
 
 popd
 
@@ -994,6 +1002,7 @@ exit 0
 %{_kerneldir}/include/rxrpc
 %{_kerneldir}/include/keys
 %{_kerneldir}/include/rdma
+%{_kerneldir}/include/xen
 %{_kerneldir}/init
 %{_kerneldir}/ipc
 %{_kerneldir}/kernel
@@ -1065,6 +1074,7 @@ exit 0
 %{_up_develdir}/include/video
 %{_up_develdir}/include/media
 %{_up_develdir}/include/rxrpc
+%{_up_develdir}/include/xen
 %{_up_develdir}/init
 %{_up_develdir}/ipc
 %{_up_develdir}/kernel
@@ -1135,6 +1145,7 @@ exit 0
 %{_smp_develdir}/include/video
 %{_smp_develdir}/include/media
 %{_smp_develdir}/include/rxrpc
+%{_smp_develdir}/include/xen
 %{_smp_develdir}/init
 %{_smp_develdir}/ipc
 %{_smp_develdir}/kernel
