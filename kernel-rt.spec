@@ -23,13 +23,13 @@
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		rc2
+%define kpatch		rc4
 %define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		2
+%define rt_rel		1
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -173,14 +173,12 @@ Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchl
 
 # Mingos patches
 %if %kpatch
-Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.patch
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2
+Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2.sign
 %else
-Patch2:		http://people.redhat.com/mingo/realtime-preempt/patch-%{kversion}-%{ktag}%{rt_rel}.patch
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2
+Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2.sign
 %endif
-
-# Steven Rostedt's patches
-Patch3:		fix_non_smp_compile_smp_stubs.patch
-Patch4:		add_missing_semicolon_in_percpu_list_h.patch 
 
 #END
 ####################################################################
@@ -481,10 +479,6 @@ pushd %src_dir
 # Mingo's patch
 %patch2 -p1
 
-# Steven Rostedt's patches
-%patch3 -p1
-%patch4 -p1
-
 popd
 
 # PATCH END
@@ -543,7 +537,10 @@ PrepareKernel() {
 	%else
 		LC_ALL=C perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = -$extension/" Makefile
 	%endif
-
+	
+	### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
+	LC_ALL=C perl -p -i -e "s/^source/### source/" drivers/crypto/Kconfig
+	
 	%smake -s mrproper
 	cp arch/%{target_arch}/$config_name .config
 	%smake oldconfig
@@ -590,10 +587,6 @@ SaveDevel() {
 	cp -fR arch/%{target_arch}/kernel/sigframe.h $DevelRoot/arch/%{target_arch}/kernel/
 	%endif
 	cp -fR .config Module.symvers $DevelRoot
-	
-### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
-	mkdir -p $DevelRoot/arch/s390/crypto/
-	cp -fR arch/s390/crypto/Kconfig $DevelRoot/arch/s390/crypto/
 	
         # Needed for truecrypt build (Danny)
 	cp -fR drivers/md/dm.h $DevelRoot/drivers/md/
@@ -704,9 +697,6 @@ for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68kn
 	rm -rf %{target_source}/arch/$i
 	rm -rf %{target_source}/include/asm-$i
 
-### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
-	mkdir -p %{target_source}/arch/s390/crypto/
-	cp -fR arch/s390/crypto/Kconfig %{target_source}/arch/s390/crypto/
 %if %build_devel
 %if %build_up
 	rm -rf %{target_up_devel}/arch/$i
@@ -715,15 +705,6 @@ for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68kn
 %if %build_smp
 	rm -rf %{target_smp_devel}/arch/$i
 	rm -rf %{target_smp_devel}/include/asm-$i
-%endif
-### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
-%if %build_up
-	mkdir -p %{target_up_devel}/arch/s390/crypto/
-	cp -fR arch/s390/crypto/Kconfig %{target_up_devel}/arch/s390/crypto/
-%endif
-%if %build_smp
-	mkdir -p %{target_smp_devel}/arch/s390/crypto/
-	cp -fR arch/s390/crypto/Kconfig %{target_smp_devel}/arch/s390/crypto/
 %endif
 # Needed for truecrypt build (Danny)
 %if %build_up
@@ -960,8 +941,6 @@ exit 0
 %{_kerneldir}/Makefile
 %{_kerneldir}/README
 %{_kerneldir}/REPORTING-BUGS
-### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
-%{_kerneldir}/arch/s390
 %ifarch sparc sparc64
 %{_kerneldir}/arch/sparc
 %{_kerneldir}/arch/sparc64
@@ -1021,8 +1000,6 @@ exit 0
 # kernel-devel
 %if %build_up
 %files -n %{kname}-devel-%{buildrel}
-# this defattr makes tree readonly, to try and work around broken dkms & co
-#defattr(0444,root,root,0555)
 %defattr(-,root,root)
 %dir %{_up_develdir}
 %dir %{_up_develdir}/arch
@@ -1032,8 +1009,6 @@ exit 0
 %{_up_develdir}/Kbuild
 %{_up_develdir}/Makefile
 %{_up_develdir}/Module.symvers
-### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
-%{_up_develdir}/arch/s390
 %ifarch sparc sparc64
 %{_up_develdir}/arch/sparc
 %{_up_develdir}/arch/sparc64
@@ -1092,8 +1067,6 @@ exit 0
 # kernel-smp-devel
 %if %build_smp
 %files -n %{kname}-smp-devel-%{buildrel}
-# this defattr makes tree readonly, to try and work around broken dkms & co
-#defattr(0444,root,root,0555)
 %defattr(-,root,root)
 %dir %{_smp_develdir}
 %dir %{_smp_develdir}/arch
@@ -1103,8 +1076,6 @@ exit 0
 %{_smp_develdir}/Kbuild
 %{_smp_develdir}/Makefile
 %{_smp_develdir}/Module.symvers
-### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
-%{_smp_develdir}/arch/s390
 %ifarch sparc sparc64
 %{_smp_develdir}/arch/sparc
 %{_smp_develdir}/arch/sparc64
@@ -1197,6 +1168,15 @@ exit 0
 %endif
 
 %changelog
+* Sun Sep  2 2007 Thomas Backlund <tmb@mandriva.org> 2.6.23-0.rc4.rt1.1mdv
+- update to kernel.org 2.6.23-rc4
+- update to 2.6.23-rc4-rt1
+- fix #29744, #29074 in a cleaner way by disabling the sourcing of
+  arch/s390/crypto/Kconfig
+- fix patch urls to match the new project repo at kernel.org
+- drop patches 3, 4
+- update defconfigs
+
 * Sat Jul 15 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.2mdv
 - disable LOCKDEP and DEBUG_SLAB as they are bad for latencies and 
   runtime overhead
