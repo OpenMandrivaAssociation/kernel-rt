@@ -32,7 +32,7 @@
 %define rt_rel		1
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -1168,6 +1168,9 @@ exit 0
 %endif
 
 %changelog
+* Thu Sep  6 2007 Thomas Backlund <tmb@mandriva.org> 2.6.23-0.rc4.rt1.2mdv
+- rebuild as the old one got lost in the BS
+
 * Sun Sep  2 2007 Thomas Backlund <tmb@mandriva.org> 2.6.23-0.rc4.rt1.1mdv
 - update to kernel.org 2.6.23-rc4
 - update to 2.6.23-rc4-rt1
