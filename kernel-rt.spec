@@ -29,7 +29,7 @@
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		2
+%define rt_rel		3
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -179,6 +179,11 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%
 Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2
 Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2.sign
 %endif
+
+
+# LKML's patches
+Patch150:	sched_prio.patch
+
 
 #END
 ####################################################################
@@ -478,6 +483,9 @@ pushd %src_dir
 
 # Mingo's patch
 %patch2 -p1
+
+# LKML's patches
+%patch150 -p1
 
 popd
 
