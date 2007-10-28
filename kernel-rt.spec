@@ -24,12 +24,12 @@
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		0
+%define kstable		1
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		3
+%define rt_rel		4
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -182,8 +182,7 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%
 
 
 # LKML's patches
-Patch150:	sched_prio.patch
-
+Patch160:	fix_sched_rt_c.patch
 
 #END
 ####################################################################
@@ -485,7 +484,8 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-%patch150 -p1
+%patch160 -p1
+
 
 popd
 
