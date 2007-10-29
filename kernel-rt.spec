@@ -29,7 +29,7 @@
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		4
+%define rt_rel		5
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -182,7 +182,6 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%
 
 
 # LKML's patches
-Patch160:	fix_sched_rt_c.patch
 
 #END
 ####################################################################
@@ -484,7 +483,6 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-%patch160 -p1
 
 
 popd
