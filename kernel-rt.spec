@@ -19,17 +19,17 @@
 
 %define kernelversion	2
 %define patchlevel	6
-%define sublevel	23
+%define sublevel	24
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		0
-%define kstable		1
+%define kpatch		rc2
+%define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		11
+%define rt_rel		1
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -120,7 +120,7 @@ only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org ker
 
 # Aliases for amd64 builds (better make source links?)
 %define target_cpu	%(echo %{_target_cpu} | sed -e "s/amd64/x86_64/")
-%define target_arch	%(echo %{_arch} | sed -e "s/amd64/x86_64/" -e "s/sparc/%{_target_cpu}/")
+%define target_arch	%(echo %{_arch} | sed -e "s/amd64/x86_64/" -e "s/sparc/%{_target_cpu}/" -e "s/i386/x86/" -e "s/x86_64/x86/")
 
 # src.rpm description
 Summary: 	The Linux kernel (the core of the Linux operating system)
@@ -182,6 +182,8 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%
 
 
 # LKML's patches
+Patch101:	fix_ioat_dma_list_spice.patch
+Patch102:	fix_smp_call_function_mask_in_kvm_main.patch
 
 #END
 ####################################################################
@@ -483,7 +485,8 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-
+%patch101 -p1
+%patch102 -p1
 
 popd
 
@@ -498,10 +501,8 @@ pushd ${RPM_SOURCE_DIR}
 
 #
 # Copy our defconfigs into place.
-for i in i386 sparc64 x86_64; do
-	cp -f $i.config %{build_dir}/linux-%{tar_ver}/arch/$i/defconfig
-	cp -f $i-smp.config %{build_dir}/linux-%{tar_ver}/arch/$i/defconfig-smp
-done
+cp -f %{target_cpu}.config     %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
+cp -f %{target_cpu}-smp.config %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig-smp
 popd
 
 # make sure the kernel has the sublevel we know it has...
@@ -724,22 +725,16 @@ done
 
 # remove arch files based on target arch
 %ifnarch %{ix86} x86_64
-	rm -rf %{target_source}/arch/i386
-	rm -rf %{target_source}/arch/x86_64
-	rm -rf %{target_source}/include/asm-i386
-	rm -rf %{target_source}/include/asm-x86_64
+	rm -rf %{target_source}/arch/x86
+	rm -rf %{target_source}/include/asm-x86
 %if %build_devel
 %if %build_up
-	rm -rf %{target_up_devel}/arch/i386
-	rm -rf %{target_up_devel}/arch/x86_64
-	rm -rf %{target_up_devel}/include/asm-i386
-	rm -rf %{target_up_devel}/include/asm-x86_64
+	rm -rf %{target_up_devel}/arch/x86
+	rm -rf %{target_up_devel}/include/asm-x86
 %endif
 %if %build_smp
-	rm -rf %{target_smp_devel}/arch/i386
-	rm -rf %{target_smp_devel}/arch/x86_64
-	rm -rf %{target_smp_devel}/include/asm-i386
-	rm -rf %{target_smp_devel}/include/asm-x86_64
+	rm -rf %{target_smp_devel}/arch/x86
+	rm -rf %{target_smp_devel}/include/asm-x86
 %endif
 %endif
 %endif
@@ -952,8 +947,7 @@ exit 0
 %{_kerneldir}/arch/sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_kerneldir}/arch/i386
-%{_kerneldir}/arch/x86_64
+%{_kerneldir}/arch/x86
 %endif
 %{_kerneldir}/arch/um
 %{_kerneldir}/block
@@ -969,8 +963,7 @@ exit 0
 %{_kerneldir}/include/asm-sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_kerneldir}/include/asm-i386
-%{_kerneldir}/include/asm-x86_64
+%{_kerneldir}/include/asm-x86
 %endif
 %{_kerneldir}/include/asm-um
 %{_kerneldir}/include/config
@@ -994,6 +987,7 @@ exit 0
 %{_kerneldir}/lib
 %{_kerneldir}/mm
 %{_kerneldir}/net
+%{_kerneldir}/samples
 %{_kerneldir}/security
 %{_kerneldir}/scripts
 %{_kerneldir}/sound
@@ -1020,8 +1014,7 @@ exit 0
 %{_up_develdir}/arch/sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_up_develdir}/arch/i386
-%{_up_develdir}/arch/x86_64
+%{_up_develdir}/arch/x86
 %endif
 %{_up_develdir}/arch/um
 %{_up_develdir}/block
@@ -1037,8 +1030,7 @@ exit 0
 %{_up_develdir}/include/asm-sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_up_develdir}/include/asm-i386
-%{_up_develdir}/include/asm-x86_64
+%{_up_develdir}/include/asm-x86
 %endif
 %{_up_develdir}/include/asm-um
 %{_up_develdir}/include/config
@@ -1062,6 +1054,7 @@ exit 0
 %{_up_develdir}/lib
 %{_up_develdir}/mm
 %{_up_develdir}/net
+%{_up_develdir}/samples
 %{_up_develdir}/scripts
 %{_up_develdir}/security
 %{_up_develdir}/sound
@@ -1087,8 +1080,7 @@ exit 0
 %{_smp_develdir}/arch/sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_smp_develdir}/arch/i386
-%{_smp_develdir}/arch/x86_64
+%{_smp_develdir}/arch/x86
 %endif
 %{_smp_develdir}/arch/um
 %{_smp_develdir}/block
@@ -1104,8 +1096,7 @@ exit 0
 %{_smp_develdir}/include/asm-sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_smp_develdir}/include/asm-i386
-%{_smp_develdir}/include/asm-x86_64
+%{_smp_develdir}/include/asm-x86
 %endif
 %{_smp_develdir}/include/asm-um
 %{_smp_develdir}/include/config
@@ -1129,6 +1120,7 @@ exit 0
 %{_smp_develdir}/lib
 %{_smp_develdir}/mm
 %{_smp_develdir}/net
+%{_smp_develdir}/samples
 %{_smp_develdir}/scripts
 %{_smp_develdir}/security
 %{_smp_develdir}/sound
