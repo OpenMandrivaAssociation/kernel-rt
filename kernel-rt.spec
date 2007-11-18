@@ -501,8 +501,8 @@ pushd ${RPM_SOURCE_DIR}
 
 #
 # Copy our defconfigs into place.
-cp -f %{target_cpu}.config     %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
-cp -f %{target_cpu}-smp.config %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig-smp
+cp -f %{_arch}.config     %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
+cp -f %{_arch}-smp.config %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig-smp
 popd
 
 # make sure the kernel has the sublevel we know it has...
