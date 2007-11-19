@@ -32,7 +32,7 @@
 %define rt_rel		1
 
 # this is the releaseversion
-%define mdvrelease 	2
+%define mdvrelease 	3
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -140,6 +140,8 @@ URL: 		http://www.kernel.org/
 ### This is for full SRC RPM
 Source0:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.bz2
 Source1:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.bz2.sign
+# This is for disabling mrproper on -devel rpms
+Source2:		disable-mrproper-in-devel-rpms.patch
 
 Source4:  README.kernel-sources
 Source5:  README.MandrivaLinux
@@ -179,7 +181,6 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%
 Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2
 Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2.sign
 %endif
-
 
 # LKML's patches
 Patch101:	fix_ioat_dma_list_spice.patch
@@ -585,11 +586,19 @@ SaveDevel() {
 		DevelRoot=%{temp_smp_devel}
 	fi
 	mkdir -p $DevelRoot
-	for i in $(find . -name Makefile -o -name Makefile-* -o -name Makefile.*); do cp -R --parents $i $DevelRoot;done
-	for i in $(find . -name Kconfig -o -name Kconfig.* -o -name Kbuild -o -name Kbuild.*); do cp -R --parents $i $DevelRoot;done
+	for i in $(find . -name 'Makefile*'); do cp -R --parents $i $DevelRoot;done
+	for i in $(find . -name 'Kconfig*' -o -name 'Kbuild*'); do cp -R --parents $i $DevelRoot;done
 	cp -fR include $DevelRoot
 	cp -fR scripts $DevelRoot
-	cp -fR arch/%{target_arch}/kernel/asm-offsets.{c,s} $DevelRoot/arch/%{target_arch}/kernel/
+	%ifarch %{ix86} x86_64
+		cp -fR arch/x86/kernel/asm-offsets.{c,s} $DevelRoot/arch/x86/kernel/
+		cp -fR arch/x86/kernel/asm-offsets_{32,64}.c $DevelRoot/arch/x86/kernel/
+	%else
+		cp -fR arch/%{target_arch}/kernel/asm-offsets.{c,s} $DevelRoot/arch/%{target_arch}/kernel/
+	%endif
+	%ifarch %{ix86}
+		cp -fR arch/x86/kernel/sigframe_32.h $DevelRoot/arch/x86/kernel/
+	%endif
 	cp -fR .config Module.symvers $DevelRoot
 	
         # Needed for truecrypt build (Danny)
@@ -758,6 +767,16 @@ done
 
 # other misc files
 rm -f %{target_source}/{.config.old,.config.cmd,.tmp_gas_check,.mailmap,.missing-syscalls.d,.mm}
+
+# disable mrproper in -devel rpms
+%if %build_devel
+%if %build_up
+patch -p1 -d %{target_up_devel} -i %{SOURCE2}
+%endif
+%if %build_smp
+patch -p1 -d %{target_smp_devel} -i %{SOURCE2}
+%endif
+%endif
 
 #endif %build_source
 %endif
