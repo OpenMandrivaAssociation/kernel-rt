@@ -32,7 +32,7 @@
 %define rt_rel		1
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -590,9 +590,6 @@ SaveDevel() {
 	cp -fR include $DevelRoot
 	cp -fR scripts $DevelRoot
 	cp -fR arch/%{target_arch}/kernel/asm-offsets.{c,s} $DevelRoot/arch/%{target_arch}/kernel/
-	%ifarch %{ix86}
-	cp -fR arch/%{target_arch}/kernel/sigframe.h $DevelRoot/arch/%{target_arch}/kernel/
-	%endif
 	cp -fR .config Module.symvers $DevelRoot
 	
         # Needed for truecrypt build (Danny)
