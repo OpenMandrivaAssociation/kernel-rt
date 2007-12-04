@@ -841,7 +841,7 @@ fi
 exit 0
 
 %post -n %{kname}-%{buildrel}
-/sbin/installkernel %{buildrel}
+/sbin/installkernel -L %{buildrel}
 if [ -d /usr/src/%{kname}-devel-%{buildrel} ]; then
     ln -sf /usr/src/%{kname}-devel-%{buildrel} /lib/modules/%{buildrel}/build
     ln -sf /usr/src/%{kname}-devel-%{buildrel} /lib/modules/%{buildrel}/source
@@ -863,7 +863,7 @@ fi
 exit 0
 
 %post -n %{kname}-smp-%{buildrel}
-/sbin/installkernel %{buildrel}smp
+/sbin/installkernel -L %{buildrel}smp
 if [ -d /usr/src/%{kname}-devel-%{buildrel}smp ]; then
     ln -sf /usr/src/%{kname}-devel-%{buildrel}smp /lib/modules/%{buildrel}smp/build
     ln -sf /usr/src/%{kname}-devel-%{buildrel}smp /lib/modules/%{buildrel}smp/source
