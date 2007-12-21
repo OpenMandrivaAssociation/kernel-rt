@@ -198,6 +198,7 @@ Patch102:	fix_smp_call_function_mask_in_kvm_main.patch
 %define kprovides kernel = %{tar_ver}, alsa
 
 Conflicts: drakxtools-backend < 10.4.140
+BuildRoot: 	%{_tmppath}/%{name}-%{kversion}-build-%{_arch}
 Autoreqprov: 	no
 BuildRequires: 	gcc module-init-tools >= 0.9.15
 
