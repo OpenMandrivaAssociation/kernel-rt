@@ -32,7 +32,7 @@
 %define rt_rel		1
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -335,6 +335,46 @@ If you want to build your own kernel, you need to install the full
 %{rt_info}
 
 
+# 
+# kernel-debug-up: unstripped kernel vmlinux
+#
+
+%package -n %{kname}-debug-%{buildrel}
+Version:  %{fakever}
+Release:  %{fakerel}
+Provides: kernel-debug = %{kverrel}
+Summary:  The %{kname} debug files
+Group:    Development/Kernel
+Autoreqprov: no
+Requires: glibc-devel
+
+%description -n %{kname}-debug-%{buildrel}
+This package contains the kernel-debug files that should be enough to 
+use debugging/monitoring tool (like systemtap, oprofile, ...)
+
+%{rt_info}
+
+
+# 
+# kernel-debug-smp: unstripped kernel vmlinux
+#
+
+%package -n %{kname}-smp-debug-%{buildrel}
+Version:  %{fakever}
+Release:  %{fakerel}
+Provides: kernel-debug = %{kverrel}
+Summary:  The %{kname}-smp debug files
+Group:    Development/Kernel
+Autoreqprov: no
+Requires: glibc-devel
+
+%description -n %{kname}-smp-debug-%{buildrel}
+This package contains the kernel-debug files that should be enough to 
+use debugging/monitoring tool (like systemtap, oprofile, ...)
+
+%{rt_info}
+
+
 #
 # kernel-doc: documentation for the Linux kernel
 #
@@ -446,6 +486,42 @@ Obsoletes:	%{kname}-smp-headers-latest
 %description -n %{kname}-smp-devel-latest
 This package is a virtual rpm that aims to make sure you always have the
 latest %{kname}-smp-devel installed...
+
+%{rt_info}
+
+
+#
+# kernel-debug-latest: virtual rpm
+#
+
+%package -n %{kname}-debug-latest
+Version:        %{kversion}
+Release:        %{rpmrel}
+Summary: 	Virtual rpm for latest %{kname}-debug
+Group: 	  	System/Kernel and hardware
+Requires: 	%{kname}-debug-%{buildrel}
+
+%description -n %{kname}-debug-latest
+This package is a virtual rpm that aims to make sure you always have the
+latest %{kname}-debug installed...
+
+%{rt_info}
+
+
+#
+# kernel-smp-debug-latest: virtual rpm
+#
+
+%package -n %{kname}-smp-debug-latest
+Version:        %{kversion}
+Release:        %{rpmrel}
+Summary: 	Virtual rpm for latest %{kname}-smp-debug
+Group: 	  	System/Kernel and hardware
+Requires: 	%{kname}-smp-debug-%{buildrel}
+
+%description -n %{kname}-smp-debug-latest
+This package is a virtual rpm that aims to make sure you always have the
+latest %{kname}-smp-debug installed...
 
 %{rt_info}
 
@@ -568,8 +644,10 @@ BuildKernel() {
 
 	%ifarch sparc64
 	gzip -9c vmlinux > %{temp_boot}/vmlinuz-$KernelVer
+	cp -f vmlinux %{temp_boot}/vmlinux-$KernelVer
 	%else
 	cp -f arch/%{target_arch}/boot/bzImage %{temp_boot}/vmlinuz-$KernelVer
+	cp -f vmlinux %{temp_boot}/vmlinux-$KernelVer
 	%endif
 
 	# modules
@@ -622,6 +700,10 @@ CreateFiles() {
 	echo "%{_modulesdir}/${kernversion}/modules.*" >> $output
 	echo "%doc README.kernel-sources" >> $output
 	echo "%doc README.MandrivaLinux" >> $output
+
+	# list of debug file
+	output=../debug_files.$kernversion
+	echo "%{_bootdir}/vmlinux-${kernversion}" >> $output
 }
 
 
@@ -680,6 +762,11 @@ PrepareKernel "" %{buildrpmrel}custom
 ### install
 ###
 %install
+
+# on ne strippe pas vmlinux
+EXCLUDE_FROM_STRIP="%{_bootdir}/vmlinux"
+export EXCLUDE_FROM_STRIP
+
 install -m 644 %{SOURCE4}  .
 install -m 644 %{SOURCE5}  .
 
@@ -780,6 +867,10 @@ patch -p1 -d %{target_smp_devel} -i %{SOURCE2}
 
 #endif %build_source
 %endif
+
+# as we have selected DEBUG_INFO in .config, we need to strip module
+# to avoid a REALLY REALLY BIG kernel
+find %{target_modules} -name "*.ko" | xargs strip --remove-section=.comment --remove-section=.note --strip-unneeded
 
 # gzipping modules
 find %{target_modules} -name "*.ko" | xargs gzip -9
@@ -1150,6 +1241,18 @@ exit 0
 %endif
 %endif
 
+#
+# debug package
+#
+%if %build_up
+%files -n %{kname}-debug-%{buildrel} -f debug_files.%{buildrel}
+%endif
+
+%if %build_smp
+%files -n %{kname}-smp-debug-%{buildrel} -f debug_files.%{buildrel}smp
+%endif
+
+
 %if %build_doc
 %files -n %{kname}-doc-%{buildrel}
 %defattr(-,root,root)
@@ -1178,6 +1281,12 @@ exit 0
 %files -n %{kname}-smp-devel-latest
 %defattr(-,root,root)
 %endif
+
+%files -n %{kname}-debug-latest
+%defattr(-,root,root)
+
+%files -n %{kname}-smp-debug-latest
+%defattr(-,root,root)
 
 %if %build_doc
 %files -n %{kname}-doc-latest
