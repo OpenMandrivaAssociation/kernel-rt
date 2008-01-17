@@ -23,7 +23,7 @@
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		rc7
+%define kpatch		rc8
 %define kstable		0
 
 %define ktag		rt
@@ -183,9 +183,7 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%
 %endif
 
 # LKML's patches
-Patch101:	fix_ioat_dma_list_spice.patch
 Patch102:	fix_smp_call_function_mask_in_kvm_main.patch
-Patch103:	fix_quicklist_h.patch
 
 #END
 ####################################################################
@@ -563,9 +561,7 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-%patch101 -p1
 %patch102 -p1
-%patch103 -p1
 
 popd
 
