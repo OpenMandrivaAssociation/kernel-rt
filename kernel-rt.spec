@@ -23,7 +23,7 @@
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		rc8
+%define kpatch		0
 %define kstable		0
 
 %define ktag		rt
@@ -851,7 +851,7 @@ done
 %endif
 
 # other misc files
-rm -f %{target_source}/{.config.old,.config.cmd,.tmp_gas_check,.mailmap,.missing-syscalls.d,.mm}
+rm -f %{target_source}/{.config.old,.config.cmd,.tmp_gas_check,.mailmap,.missing-syscalls.d,.mm,arch/.gitignore}
 
 # disable mrproper in -devel rpms
 %if %build_devel
