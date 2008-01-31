@@ -32,7 +32,7 @@
 %define rt_rel		1
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -184,6 +184,9 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%
 
 # LKML's patches
 Patch102:	fix_smp_call_function_mask_in_kvm_main.patch
+
+# MDV Patches
+Patch201:	kernel-sysctl_check-remove-s390-include.patch
 
 #END
 ####################################################################
@@ -562,6 +565,9 @@ pushd %src_dir
 
 # LKML's patches
 %patch102 -p1
+
+# MDV Patches
+%patch201 -p1
 
 popd
 
@@ -1290,29 +1296,3 @@ exit 0
 %files -n %{kname}-doc-latest
 %defattr(-,root,root)
 %endif
-
-%changelog
-* Thu Sep  6 2007 Thomas Backlund <tmb@mandriva.org> 2.6.23-0.rc4.rt1.2mdv
-- rebuild as the old one got lost in the BS
-
-* Sun Sep  2 2007 Thomas Backlund <tmb@mandriva.org> 2.6.23-0.rc4.rt1.1mdv
-- update to kernel.org 2.6.23-rc4
-- update to 2.6.23-rc4-rt1
-- fix #29744, #29074 in a cleaner way by disabling the sourcing of
-  arch/s390/crypto/Kconfig
-- fix patch urls to match the new project repo at kernel.org
-- drop patches 3, 4
-- update defconfigs
-
-* Sat Jul 15 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.2mdv
-- disable LOCKDEP and DEBUG_SLAB as they are bad for latencies and 
-  runtime overhead
-- fix build when building only up or sm
-- dont build -doc rpms
-
-* Sat Jul 14 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.1mdv
-- Introduce Ingo Molnars kernel-rt (realtime) series
-- use kernel-mm spec and naming as base
-- use defconfigs from kernel-linus-2.6.22.1, and adapt them for
-  realtime build
-- dont build -doc rpms
