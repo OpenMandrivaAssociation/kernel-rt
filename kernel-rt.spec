@@ -24,15 +24,15 @@
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		3
+%define kstable		4
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		3
+%define rt_rel		4
 
 # this is the releaseversion
-%define mdvrelease 	2
+%define mdvrelease 	1
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -127,7 +127,7 @@ Summary: 	The Linux kernel (the core of the Linux operating system)
 Name:           %{kname}
 Version:        %{kversion}
 Release:        %{rpmrel}
-License: 	GPL
+License: 	GPLv2
 Group: 		System/Kernel and hardware
 ExclusiveArch: 	%{ix86} x86_64 sparc64
 ExclusiveOS: 	Linux
@@ -176,10 +176,10 @@ Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchl
 # Mingos patches
 %if %kpatch
 Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2
-Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2.sign
+#Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2.sign
 %else
 Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2
-Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2.sign
+#Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2.sign
 %endif
 
 # LKML's patches
