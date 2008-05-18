@@ -1052,9 +1052,6 @@ exit 0
 %{_kerneldir}/REPORTING-BUGS
 %{_kerneldir}/Module.markers
 %{_kerneldir}/arch/Kconfig
-%ifarch %{ix86}
-%{_kerneldir}/arch/i386
-%endif
 %ifarch sparc sparc64
 %{_kerneldir}/arch/sparc
 %{_kerneldir}/arch/sparc64
