@@ -19,17 +19,17 @@
 
 %define kernelversion	2
 %define patchlevel	6
-%define sublevel	24
+%define sublevel	25
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		7
+%define kstable		4
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		6
+%define rt_rel		1
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -183,10 +183,9 @@ Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{
 %endif
 
 # LKML's patches
-Patch102:	fix_smp_call_function_mask_in_kvm_main.patch
 
 # MDV Patches
-Patch201:	kernel-sysctl_check-remove-s390-include.patch
+
 
 #END
 ####################################################################
@@ -564,10 +563,8 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-%patch102 -p1
 
 # MDV Patches
-%patch201 -p1
 
 popd
 
@@ -797,7 +794,7 @@ chmod -R a+rX %{target_source}
 # we remove all the source files that we don't ship
 
 # first architecture files
-for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68knommu parisc powerpc ppc sh sh64 s390 v850 xtensa; do
+for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68knommu mn10300 parisc powerpc ppc sh sh64 s390 v850 xtensa; do
 	rm -rf %{target_source}/arch/$i
 	rm -rf %{target_source}/include/asm-$i
 
@@ -1053,6 +1050,8 @@ exit 0
 %{_kerneldir}/Makefile
 %{_kerneldir}/README
 %{_kerneldir}/REPORTING-BUGS
+%{_kerneldir}/Module.markers
+%{_kerneldir}/arch/Kconfig
 %ifarch %{ix86}
 %{_kerneldir}/arch/i386
 %endif
@@ -1106,6 +1105,7 @@ exit 0
 %{_kerneldir}/scripts
 %{_kerneldir}/sound
 %{_kerneldir}/usr
+%{_kerneldir}/virt/kvm
 %doc README.kernel-sources
 %doc README.MandrivaLinux
 %endif
@@ -1123,6 +1123,7 @@ exit 0
 %{_up_develdir}/Kbuild
 %{_up_develdir}/Makefile
 %{_up_develdir}/Module.symvers
+%{_up_develdir}/arch/Kconfig
 %ifarch sparc sparc64
 %{_up_develdir}/arch/sparc
 %{_up_develdir}/arch/sparc64
@@ -1189,6 +1190,7 @@ exit 0
 %{_smp_develdir}/Kbuild
 %{_smp_develdir}/Makefile
 %{_smp_develdir}/Module.symvers
+%{_smp_develdir}/arch/Kconfig
 %ifarch sparc sparc64
 %{_smp_develdir}/arch/sparc
 %{_smp_develdir}/arch/sparc64
