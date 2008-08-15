@@ -183,6 +183,8 @@ Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{
 %endif
 
 # LKML's patches
+Patch100:	fix_infiniband.patch
+Patch101:	fix_isp1760.patch
 
 # MDV Patches
 
@@ -379,7 +381,7 @@ use debugging/monitoring tool (like systemtap, oprofile, ...)
 #
 # kernel-doc: documentation for the Linux kernel
 #
-
+%if %build_doc
 %package -n %{kname}-doc-%{buildrel}
 Version:  %{fakever}
 Release:  %{fakerel}
@@ -397,7 +399,7 @@ For instructions for update, see:
 http://www.mandriva.com/en/security/kernelupdate
 
 %{rt_info}
-
+%endif
 
 #
 # kernel-latest: virtual rpm
@@ -530,7 +532,7 @@ latest %{kname}-smp-debug installed...
 #
 # kernel-doc-latest: virtual rpm
 #
-
+%if %build_doc
 %package -n %{kname}-doc-latest
 Version:        %{kversion}
 Release:        %{rpmrel}
@@ -543,7 +545,7 @@ This package is a virtual rpm that aims to make sure you always have the
 latest %{kname}-doc installed...
 
 %{rt_info}
-
+%endif
 
 #
 # End packages - here begins build stage
@@ -563,6 +565,8 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
+%patch100 -p1
+%patch101 -p1
 
 # MDV Patches
 
