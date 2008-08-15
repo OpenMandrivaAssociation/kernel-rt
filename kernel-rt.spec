@@ -679,9 +679,6 @@ SaveDevel() {
 	%else
 		cp -fR arch/%{target_arch}/kernel/asm-offsets.{c,s} $DevelRoot/arch/%{target_arch}/kernel/
 	%endif
-	%ifarch %{ix86}
-		cp -fR arch/x86/kernel/sigframe_32.h $DevelRoot/arch/x86/kernel/
-	%endif
 	cp -fR .config Module.symvers $DevelRoot
 	
         # Needed for truecrypt build (Danny)
