@@ -24,12 +24,12 @@
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		0
+%define kstable		3
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		1
+%define rt_rel		3
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -183,8 +183,6 @@ Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{
 %endif
 
 # LKML's patches
-Patch100:	fix_infiniband.patch
-Patch101:	fix_isp1760.patch
 
 # MDV Patches
 
@@ -565,8 +563,6 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-%patch100 -p1
-%patch101 -p1
 
 # MDV Patches
 
