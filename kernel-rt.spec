@@ -1047,7 +1047,7 @@ exit 0
 %{_kerneldir}/Makefile
 %{_kerneldir}/README
 %{_kerneldir}/REPORTING-BUGS
-%{_kerneldir}/Module.markers
+#{_kerneldir}/Module.markers
 %{_kerneldir}/arch/Kconfig
 %ifarch sparc sparc64
 %{_kerneldir}/arch/sparc
