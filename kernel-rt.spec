@@ -1080,6 +1080,7 @@ exit 0
 %{_kerneldir}/include/net
 %{_kerneldir}/include/pcmcia
 %{_kerneldir}/include/scsi
+%{_kerneldir}/include/trace
 %{_kerneldir}/include/sound
 %{_kerneldir}/include/video
 %{_kerneldir}/include/media
@@ -1153,6 +1154,7 @@ exit 0
 %{_up_develdir}/include/rdma
 %{_up_develdir}/include/scsi
 %{_up_develdir}/include/sound
+%{_up_develdir}/include/trace
 %{_up_develdir}/include/video
 %{_up_develdir}/include/media
 %{_up_develdir}/include/rxrpc
@@ -1220,6 +1222,7 @@ exit 0
 %{_smp_develdir}/include/rdma
 %{_smp_develdir}/include/scsi
 %{_smp_develdir}/include/sound
+%{_smp_develdir}/include/trace
 %{_smp_develdir}/include/video
 %{_smp_develdir}/include/media
 %{_smp_develdir}/include/rxrpc
