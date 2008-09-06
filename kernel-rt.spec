@@ -29,7 +29,7 @@
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		6
+%define rt_rel		7
 
 # this is the releaseversion
 %define mdvrelease 	1
