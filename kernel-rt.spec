@@ -32,7 +32,7 @@
 %define rt_rel		7
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -195,6 +195,7 @@ Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{
 %define requires2 mkinitrd >= 3.4.43-%mkrel 10
 %define requires3 bootloader-utils >= 1.9
 %define requires4 sysfsutils module-init-tools >= 0.9.15
+%define requires5 kernel-firmware >= 2.6.27-0.rc2.2mdv
 
 %define kprovides kernel = %{tar_ver}, alsa
 
@@ -223,6 +224,7 @@ Requires: 	%requires1
 Requires: 	%requires2
 Requires: 	%requires3
 Requires: 	%requires4
+Requires:       %requires5
 
 %description -n %{kname}-%{buildrel}
 The kernel package contains the Linux kernel (vmlinuz), the core of your
