@@ -32,7 +32,7 @@
 %define rt_rel		11
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -90,9 +90,10 @@ only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org ker
 %define build_doc 0
 %define build_source 1
 %define build_devel 1
+%define build_debug 1
 
 %define build_up 1
-%define build_smp 1 
+%define build_smp 1
 
 %define distro_branch %(perl -pe '/(\\d+)\\.(\\d)\\.?(\\d)?/; $_="$1.$2"' /etc/mandriva-release)
 
@@ -687,9 +688,39 @@ SaveDevel() {
 	chmod -R a+rX $DevelRoot
 }
 
+SaveDebug() {
+	kernversion=$1
+	flavour=$2
+
+	echo "SaveDebug $kernversion $flavour"
+
+	kernel_debug_files=../kernel_debug_files.$flavour
+
+	echo "%defattr(-,root,root)" > $kernel_debug_files
+	echo "%{_bootdir}/vmlinux-$kernversion" >> $kernel_debug_files
+
+	find %{temp_modules}/$kernversion/kernel \
+		-name "*.ko" -exec objcopy --only-keep-debug '{}' '{}'.debug \;
+
+	find %{temp_modules}/$kernversion/kernel \
+		-name "*.ko" -exec objcopy --add-gnu-debuglink='{}'.debug --strip-debug '{}' \;
+
+	pushd %{temp_modules}
+	find $kernversion/kernel -name "*.ko.debug" > debug_module_list
+	popd
+
+	cat %{temp_modules}/debug_module_list | sed 's|\(.*\)|%{_modulesdir}/\1|' >> $kernel_debug_files
+	cat %{temp_modules}/debug_module_list | sed 's|\(.*\)|%exclude %{_modulesdir}/\1|' >> ../kernel_exclude_debug_files.$flavour
+	rm -f %{temp_modules}/debug_module_list
+}
+
 
 CreateFiles() {
 	kernversion=$1
+	flavour=$2
+
+	echo "CreateFiles $kernversion $flavour"
+
 	output=../kernel_files.$kernversion
 
 	echo "%defattr(-,root,root)" > $output
@@ -701,15 +732,18 @@ CreateFiles() {
 	echo "%{_modulesdir}/${kernversion}/modules.*" >> $output
 	echo "%doc README.kernel-sources" >> $output
 	echo "%doc README.MandrivaLinux" >> $output
+	cat ../kernel_exclude_debug_files.$flavour >> $output
 
 	# list of debug file
 	output=../debug_files.$kernversion
-	echo "%{_bootdir}/vmlinux-${kernversion}" >> $output
+	echo %{_bootdir}/vmlinux-$kernversion >> $output
+	cat ../kernel_debug_files.$flavour >> $output
 }
 
 
 CreateKernel() {
 	flavour=$1
+	echo "CreateKernel $flavour"
 
 	if [ "$flavour" = "up" ]; then
 		KernelVer=%{buildrel}
@@ -723,7 +757,10 @@ CreateKernel() {
 	%if %build_devel
 	    SaveDevel $flavour
 	%endif
-        CreateFiles $KernelVer
+	%if %build_debug
+	    SaveDebug $KernelVer $flavour
+	%endif
+        CreateFiles $KernelVer $flavour
 }
 
 
@@ -868,10 +905,6 @@ patch -p1 -d %{target_smp_devel} -i %{SOURCE2}
 
 #endif %build_source
 %endif
-
-# as we have selected DEBUG_INFO in .config, we need to strip module
-# to avoid a REALLY REALLY BIG kernel
-find %{target_modules} -name "*.ko" | xargs strip --remove-section=.comment --remove-section=.note --strip-unneeded
 
 # gzipping modules
 find %{target_modules} -name "*.ko" | xargs gzip -9
