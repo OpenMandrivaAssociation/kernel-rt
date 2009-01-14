@@ -32,7 +32,7 @@
 %define rt_rel		13
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -92,20 +92,17 @@ only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org ker
 %define build_devel 1
 %define build_debug 1
 
-%define build_up 1
-%define build_smp 1
+%define build_kernel 1
 
 %define distro_branch %(perl -pe '/(\\d+)\\.(\\d)\\.?(\\d)?/; $_="$1.$2"' /etc/mandriva-release)
 
 # End of user definitions
-%{?_without_up: %global build_up 0}
-%{?_without_smp: %global build_smp 0}
+%{?_without_kernel: %global build_kernel 0}
 %{?_without_doc: %global build_doc 0}
 %{?_without_source: %global build_source 0}
 %{?_without_devel: %global build_devel 0}
 
-%{?_with_up: %global build_up 1}
-%{?_with_smp: %global build_smp 1}
+%{?_with_kernel: %global build_kernel 1}
 %{?_with_doc: %global build_doc 1}
 %{?_with_source: %global build_source 1}
 %{?_with_devel: %global build_devel 1}
@@ -148,11 +145,8 @@ Source4:  README.kernel-sources
 Source5:  README.MandrivaLinux
 
 Source20: i386.config
-Source21: i386-smp.config
-Source22: x86_64.config
-Source23: x86_64-smp.config
-Source24: sparc64.config
-Source25: sparc64-smp.config
+Source21: x86_64.config
+Source22: sparc64.config
 
 
 ####################################################################
@@ -212,38 +206,10 @@ Source package to build the Linux kernel.
 
 
 #
-# kernel: UP kernel
+# kernel: Symmetric MultiProcessing kernel
 #
-
+%if %build_kernel
 %package -n %{kname}-%{buildrel}
-Version:	%{fakever}
-Release:	%{fakerel}
-Summary: 	The Linux kernel (the core of the Linux operating system)
-Group: 	  	System/Kernel and hardware
-Provides: 	module-info, %kprovides
-Requires: 	%requires1
-Requires: 	%requires2
-Requires: 	%requires3
-Requires: 	%requires4
-Requires:       %requires5
-
-%description -n %{kname}-%{buildrel}
-The kernel package contains the Linux kernel (vmlinuz), the core of your
-Mandriva Linux operating system. The kernel handles the basic functions
-of the operating system: memory allocation, process allocation, device
-input and output, etc.
-
-For instructions for update, see:
-http://www.mandriva.com/en/security/kernelupdate
-
-%{rt_info}
-
-
-#
-# kernel-smp: Symmetric MultiProcessing kernel
-#
-
-%package -n %{kname}-smp-%{buildrel}
 Version:  %{fakever}
 Release:  %{fakerel}
 Summary:  The Linux Kernel compiled for SMP machines
@@ -255,21 +221,24 @@ Requires: %requires3
 Requires: %requires4
 Requires: %requires5
 
-%description -n %{kname}-smp-%{buildrel}
+%description -n %{kname}-%{buildrel}
 This package includes a SMP version of the Linux %{kversion} kernel. It is
 required only on machines with two or more CPUs, although it should work
 fine on single-CPU boxes.
+This kernel relies on in-kernel smp alternatives to switch between 
+up & smp mode depending on detected hardware. To force the kernel
+to boot in single processor mode, use the "nosmp" boot parameter.
 
 For instructions for update, see:
 http://www.mandriva.com/en/security/kernelupdate
 
 %{rt_info}
-
+%endif # build_kernel
 
 #
 # kernel-source: kernel sources
 #
-
+%if %build_source
 %package -n %{kname}-source-%{buildrel}
 Version:  %{fakever}
 Release:  %{fakerel}
@@ -292,12 +261,13 @@ For instructions for update, see:
 http://www.mandriva.com/en/security/kernelupdate
 
 %{rt_info}
+%endif # build_source
 
 
 # 
-# kernel-devel-up: stripped kernel sources 
+# kernel-devel: stripped kernel sources
 #
-
+%if %build_devel
 %package -n %{kname}-devel-%{buildrel}
 Version:  %{fakever}
 Release:  %{fakerel}
@@ -309,41 +279,18 @@ Requires: glibc-devel, ncurses-devel, make, gcc, perl
 
 %description -n %{kname}-devel-%{buildrel}
 This package contains the kernel-devel files that should be enough to build 
-3rdparty drivers against for use with %{kname}-%{buildrel}.
+3rdparty drivers against for use with the %{kname}-%{buildrel}.
 
 If you want to build your own kernel, you need to install the full 
 %{kname}-source-%{buildrel} rpm.
 
 %{rt_info}
-
-
-# 
-# kernel-devel-smp: stripped kernel sources 
-#
-
-%package -n %{kname}-smp-devel-%{buildrel}
-Version:  %{fakever}
-Release:  %{fakerel}
-Provides: kernel-devel = %{kverrel}
-Summary:  The %{kname}-smp devel files for 3rdparty modules build
-Group:    Development/Kernel
-Autoreqprov: no
-Requires: glibc-devel, ncurses-devel, make, gcc, perl
-
-%description -n %{kname}-smp-devel-%{buildrel}
-This package contains the kernel-devel files that should be enough to build 
-3rdparty drivers against for use with the %{kname}-smp-%{buildrel}.
-
-If you want to build your own kernel, you need to install the full 
-%{kname}-source-%{buildrel} rpm.
-
-%{rt_info}
-
+%endif # build_devel
 
 # 
-# kernel-debug-up: unstripped kernel vmlinux
+# kernel-debug: unstripped kernel vmlinux
 #
-
+%if %build_debug
 %package -n %{kname}-debug-%{buildrel}
 Version:  %{fakever}
 Release:  %{fakerel}
@@ -358,27 +305,7 @@ This package contains the kernel-debug files that should be enough to
 use debugging/monitoring tool (like systemtap, oprofile, ...)
 
 %{rt_info}
-
-
-# 
-# kernel-debug-smp: unstripped kernel vmlinux
-#
-
-%package -n %{kname}-smp-debug-%{buildrel}
-Version:  %{fakever}
-Release:  %{fakerel}
-Provides: kernel-debug = %{kverrel}
-Summary:  The %{kname}-smp debug files
-Group:    Development/Kernel
-Autoreqprov: no
-Requires: glibc-devel
-
-%description -n %{kname}-smp-debug-%{buildrel}
-This package contains the kernel-debug files that should be enough to 
-use debugging/monitoring tool (like systemtap, oprofile, ...)
-
-%{rt_info}
-
+%endif # build_debug
 
 #
 # kernel-doc: documentation for the Linux kernel
@@ -401,48 +328,33 @@ For instructions for update, see:
 http://www.mandriva.com/en/security/kernelupdate
 
 %{rt_info}
-%endif
+%endif # build_doc
+
 
 #
 # kernel-latest: virtual rpm
 #
-
+%if %build_kernel
 %package -n %{kname}-latest
 Version:        %{kversion}
 Release:        %{rpmrel}
 Summary: 	Virtual rpm for latest %{kname}
 Group: 	  	System/Kernel and hardware
 Requires: 	%{kname}-%{buildrel}
+Obsoletes:	%{kname}-smp-latest
 
 %description -n %{kname}-latest
 This package is a virtual rpm that aims to make sure you always have the
 latest %{kname} installed...
 
 %{rt_info}
-
-
-#
-# kernel-smp-latest: virtual rpm
-#
-
-%package -n %{kname}-smp-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}-smp
-Group: 	  	System/Kernel and hardware
-Requires: 	%{kname}-smp-%{buildrel}
-
-%description -n %{kname}-smp-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname}-smp installed...
-
-%{rt_info}
+%endif # build_kernel
 
 
 #
 # kernel-source-latest: virtual rpm
 #
-
+%if %build_source
 %package -n %{kname}-source-latest
 Version:        %{kversion}
 Release:        %{rpmrel}
@@ -455,12 +367,13 @@ This package is a virtual rpm that aims to make sure you always have the
 latest %{kname}-source installed...
 
 %{rt_info}
+%endif # build_source
 
 
 #
 # kernel-devel-latest: virtual rpm
 #
-
+%if %build_devel
 %package -n %{kname}-devel-latest
 Version:        %{kversion}
 Release:        %{rpmrel}
@@ -468,37 +381,21 @@ Summary: 	Virtual rpm for latest %{kname}-devel
 Group: 	  	System/Kernel and hardware
 Requires: 	%{kname}-devel-%{buildrel}
 Obsoletes:	%{kname}-headers-latest
+Obsoletes:	%{kname}-smp-devel-latest
+Obsoletes:	%{kname}-smp-headers-latest
 
 %description -n %{kname}-devel-latest
 This package is a virtual rpm that aims to make sure you always have the
 latest %{kname}-devel installed...
 
 %{rt_info}
-
-
-#
-# kernel-smp-devel-latest: virtual rpm
-#
-
-%package -n %{kname}-smp-devel-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}-smp-devel
-Group: 	  	System/Kernel and hardware
-Requires: 	%{kname}-smp-devel-%{buildrel}
-Obsoletes:	%{kname}-smp-headers-latest
-
-%description -n %{kname}-smp-devel-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname}-smp-devel installed...
-
-%{rt_info}
+%endif # build_devel
 
 
 #
 # kernel-debug-latest: virtual rpm
 #
-
+%if %build_debug
 %package -n %{kname}-debug-latest
 Version:        %{kversion}
 Release:        %{rpmrel}
@@ -511,25 +408,7 @@ This package is a virtual rpm that aims to make sure you always have the
 latest %{kname}-debug installed...
 
 %{rt_info}
-
-
-#
-# kernel-smp-debug-latest: virtual rpm
-#
-
-%package -n %{kname}-smp-debug-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}-smp-debug
-Group: 	  	System/Kernel and hardware
-Requires: 	%{kname}-smp-debug-%{buildrel}
-
-%description -n %{kname}-smp-debug-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname}-smp-debug installed...
-
-%{rt_info}
-
+%endif # build_debug
 
 #
 # kernel-doc-latest: virtual rpm
@@ -584,7 +463,6 @@ pushd ${RPM_SOURCE_DIR}
 #
 # Copy our defconfigs into place.
 cp -f %{_arch}.config     %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
-cp -f %{_arch}-smp.config %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig-smp
 popd
 
 # make sure the kernel has the sublevel we know it has...
@@ -596,8 +474,7 @@ LC_ALL=C perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{sublevel}/" linux-%{tar_ver}/
 %define _kerneldir /usr/src/%{kname}-%{buildrel}
 %define _bootdir /boot
 %define _modulesdir /lib/modules
-%define _up_develdir /usr/src/%{kname}-devel-%{buildrel}
-%define _smp_develdir /usr/src/%{kname}-devel-%{buildrel}smp
+%define _develdir /usr/src/%{kname}-devel-%{buildrel}
 
 
 # Directories definition needed for building
@@ -605,8 +482,7 @@ LC_ALL=C perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{sublevel}/" linux-%{tar_ver}/
 %define temp_source %{temp_root}%{_kerneldir}
 %define temp_boot %{temp_root}%{_bootdir}
 %define temp_modules %{temp_root}%{_modulesdir}
-%define temp_up_devel %{temp_root}%{_up_develdir}
-%define temp_smp_devel %{temp_root}%{_smp_develdir}
+%define temp_devel %{temp_root}%{_develdir}
 
 
 PrepareKernel() {
@@ -664,7 +540,7 @@ BuildKernel() {
 SaveDevel() {
 	flavour=$1
 	if [ "$flavour" = "up" ]; then
-		DevelRoot=%{temp_up_devel}
+		DevelRoot=%{temp_devel}
 	else
 		DevelRoot=%{temp_smp_devel}
 	fi
@@ -733,11 +609,6 @@ CreateFiles() {
 	echo "%doc README.kernel-sources" >> $output
 	echo "%doc README.MandrivaLinux" >> $output
 	cat ../kernel_exclude_debug_files.$flavour >> $output
-
-	# list of debug file
-	output=../debug_files.$kernversion
-	echo %{_bootdir}/vmlinux-$kernversion >> $output
-	cat ../kernel_debug_files.$flavour >> $output
 }
 
 
@@ -777,11 +648,7 @@ install -d %{temp_root}
 #make sure we are in the directory
 cd %src_dir
 
-%if %build_smp
-CreateKernel smp
-%endif
-
-%if %build_up
+%if %build_kernel
 CreateKernel up
 %endif
 
@@ -813,8 +680,7 @@ cd %src_dir
 %define target_source %{buildroot}/%{_kerneldir}
 %define target_boot %{buildroot}%{_bootdir}
 %define target_modules %{buildroot}%{_modulesdir}
-%define target_up_devel %{buildroot}%{_up_develdir}
-%define target_smp_devel %{buildroot}%{_smp_develdir}
+%define target_devel %{buildroot}%{_develdir}
 
 # We want to be able to test several times the install part
 rm -rf %{buildroot}
@@ -836,22 +702,15 @@ for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68kn
 	rm -rf %{target_source}/include/asm-$i
 
 %if %build_devel
-%if %build_up
-	rm -rf %{target_up_devel}/arch/$i
-	rm -rf %{target_up_devel}/include/asm-$i
-%endif
-%if %build_smp
-	rm -rf %{target_smp_devel}/arch/$i
-	rm -rf %{target_smp_devel}/include/asm-$i
-%endif
+%if %build_kernel
+	rm -rf %{target_devel}/arch/$i
+	rm -rf %{target_devel}/include/asm-$i
+%endif # build_kernel
 # Needed for truecrypt build (Danny)
-%if %build_up
-	cp -fR drivers/md/dm.h %{target_up_devel}/drivers/md/
-%endif
-%if %build_smp
-	cp -fR drivers/md/dm.h %{target_smp_devel}/drivers/md/
-%endif
-%endif	
+%if %build_kernel
+	cp -fR drivers/md/dm.h %{target_devel}/drivers/md/
+%endif # build_kernel
+%endif # build_devel
 done
 
 # remove arch files based on target arch
@@ -859,49 +718,36 @@ done
 	rm -rf %{target_source}/arch/x86
 	rm -rf %{target_source}/include/asm-x86
 %if %build_devel
-%if %build_up
-	rm -rf %{target_up_devel}/arch/x86
-	rm -rf %{target_up_devel}/include/asm-x86
-%endif
-%if %build_smp
-	rm -rf %{target_smp_devel}/arch/x86
-	rm -rf %{target_smp_devel}/include/asm-x86
-%endif
-%endif
-%endif
+%if %build_kernel
+	rm -rf %{target_devel}/arch/x86
+	rm -rf %{target_devel}/include/asm-x86
+%endif # build_kernel
+%endif # build_devel
+%endif # ifnarch %{ix86} x86_64
 %ifnarch sparc sparc64
 	rm -rf %{target_source}/arch/sparc
 	rm -rf %{target_source}/arch/sparc64
 	rm -rf %{target_source}/include/asm-sparc
 	rm -rf %{target_source}/include/asm-sparc64
 %if %build_devel
-%if %build_up
-	rm -rf %{target_up_devel}/arch/sparc
-	rm -rf %{target_up_devel}/arch/sparc64
-	rm -rf %{target_up_devel}/include/asm-sparc
-	rm -rf %{target_up_devel}/include/asm-sparc64
-%endif
-%if %build_smp
-	rm -rf %{target_smp_devel}/arch/sparc
-	rm -rf %{target_smp_devel}/arch/sparc64
-	rm -rf %{target_smp_devel}/include/asm-sparc
-	rm -rf %{target_smp_devel}/include/asm-sparc64
-%endif
-%endif	
-%endif
+%if %build_kernel
+	rm -rf %{target_devel}/arch/sparc
+	rm -rf %{target_devel}/arch/sparc64
+	rm -rf %{target_devel}/include/asm-sparc
+	rm -rf %{target_devel}/include/asm-sparc64
+%endif # build_kernel
+%endif # build_devel
+%endif # ifnarch sparc sparc64
 
 # other misc files
 rm -f %{target_source}/{.config.old,.config.cmd,.tmp_gas_check,.mailmap,.missing-syscalls.d,.mm,arch/.gitignore}
 
 # disable mrproper in -devel rpms
 %if %build_devel
-%if %build_up
-patch -p1 -d %{target_up_devel} -i %{SOURCE2}
-%endif
-%if %build_smp
-patch -p1 -d %{target_smp_devel} -i %{SOURCE2}
-%endif
-%endif
+%if %build_kernel
+patch -p1 -d %{target_devel} -i %{SOURCE2}
+%endif # build_kernel
+%endif # build_devel
 
 #endif %build_source
 %endif
@@ -954,7 +800,7 @@ rm -rf %{buildroot}
 ### scripts
 ###
 
-### UP kernel
+### kernel
 %preun -n %{kname}-%{buildrel}
 /sbin/installkernel -R %{buildrel}
 if [ -L /lib/modules/%{buildrel}/build ]; then
@@ -976,28 +822,6 @@ fi
 /sbin/kernel_remove_initrd %{buildrel}
 
 
-### SMP kernel
-%preun -n %{kname}-smp-%{buildrel}
-/sbin/installkernel -R %{buildrel}smp
-if [ -L /lib/modules/%{buildrel}smp/build ]; then
-    rm -f /lib/modules/%{buildrel}smp/build
-fi
-if [ -L /lib/modules/%{buildrel}smp/source ]; then
-    rm -f /lib/modules/%{buildrel}smp/source
-fi
-exit 0
-
-%post -n %{kname}-smp-%{buildrel}
-/sbin/installkernel -L %{buildrel}smp
-if [ -d /usr/src/%{kname}-devel-%{buildrel}smp ]; then
-    ln -sf /usr/src/%{kname}-devel-%{buildrel}smp /lib/modules/%{buildrel}smp/build
-    ln -sf /usr/src/%{kname}-devel-%{buildrel}smp /lib/modules/%{buildrel}smp/source
-fi
-
-%postun -n %{kname}-smp-%{buildrel}
-/sbin/kernel_remove_initrd %{buildrel}smp
-
-
 ### kernel-devel
 %post -n %{kname}-devel-%{buildrel}
 # place /build and /source symlinks in place.
@@ -1013,25 +837,6 @@ if [ -L /lib/modules/%{buildrel}/build ]; then
 fi
 if [ -L /lib/modules/%{buildrel}/source ]; then
     rm -f /lib/modules/%{buildrel}/source
-fi
-exit 0
-
-
-### kernel-smp-devel
-%post -n %{kname}-smp-devel-%{buildrel}
-# place /build and /source symlinks in place.
-if [ -d /lib/modules/%{buildrel}smp ]; then
-    ln -sf /usr/src/%{kname}-devel-%{buildrel}smp /lib/modules/%{buildrel}smp/build
-    ln -sf /usr/src/%{kname}-devel-%{buildrel}smp /lib/modules/%{buildrel}smp/source
-fi
-
-%preun -n %{kname}-smp-devel-%{buildrel}
-# we need to delete <modules>/{build,source} at uninstall
-if [ -L /lib/modules/%{buildrel}smp/build ]; then
-    rm -f /lib/modules/%{buildrel}smp/build
-fi
-if [ -L /lib/modules/%{buildrel}smp/source ]; then
-    rm -f /lib/modules/%{buildrel}smp/source
 fi
 exit 0
 
@@ -1059,14 +864,16 @@ exit 0
 ### file lists
 ###
 
-%if %build_up
+#
+# kernel
+#
+%if %build_kernel
 %files -n %{kname}-%{buildrel} -f kernel_files.%{buildrel}
-%endif
+%endif # build_kernel
 
-%if %build_smp
-%files -n %{kname}-smp-%{buildrel} -f kernel_files.%{buildrel}smp
-%endif
-
+#
+# kernel-source
+#
 %if %build_source
 %files -n %{kname}-source-%{buildrel}
 %defattr(-,root,root)
@@ -1141,193 +948,129 @@ exit 0
 %doc README.MandrivaLinux
 %endif
 
-%if %build_devel
+#
 # kernel-devel
-%if %build_up
+#
+%if %build_devel
 %files -n %{kname}-devel-%{buildrel}
 %defattr(-,root,root)
-%dir %{_up_develdir}
-%dir %{_up_develdir}/arch
-%dir %{_up_develdir}/include
-%{_up_develdir}/.config
-%{_up_develdir}/Documentation
-%{_up_develdir}/Kbuild
-%{_up_develdir}/Makefile
-%{_up_develdir}/Module.symvers
-%{_up_develdir}/arch/Kconfig
+%dir %{_develdir}
+%dir %{_develdir}/arch
+%dir %{_develdir}/include
+%{_develdir}/.config
+%{_develdir}/Documentation
+%{_develdir}/Kbuild
+%{_develdir}/Makefile
+%{_develdir}/Module.symvers
+%{_develdir}/arch/Kconfig
 %ifarch sparc sparc64
-%{_up_develdir}/arch/sparc
-%{_up_develdir}/arch/sparc64
+%{_develdir}/arch/sparc
+%{_develdir}/arch/sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_up_develdir}/arch/x86
+%{_develdir}/arch/x86
 %endif
-%{_up_develdir}/arch/um
-%{_up_develdir}/block
-%{_up_develdir}/crypto
-%{_up_develdir}/drivers
-%{_up_develdir}/fs
-%{_up_develdir}/include/Kbuild
-%{_up_develdir}/include/acpi
-%{_up_develdir}/include/asm
-%{_up_develdir}/include/asm-generic
+%{_develdir}/arch/um
+%{_develdir}/block
+%{_develdir}/crypto
+%{_develdir}/drivers
+%{_develdir}/fs
+%{_develdir}/include/Kbuild
+%{_develdir}/include/acpi
+%{_develdir}/include/asm
+%{_develdir}/include/asm-generic
 %ifarch sparc sparc64
-%{_up_develdir}/include/asm-sparc
-%{_up_develdir}/include/asm-sparc64
+%{_develdir}/include/asm-sparc
+%{_develdir}/include/asm-sparc64
 %endif
 %ifarch %{ix86} x86_64
-%{_up_develdir}/include/asm-x86
+%{_develdir}/include/asm-x86
 %endif
-%{_up_develdir}/include/asm-um
-%{_up_develdir}/include/config
-%{_up_develdir}/include/crypto
-%{_up_develdir}/include/keys
-%{_up_develdir}/include/linux
-%{_up_develdir}/include/math-emu
-%{_up_develdir}/include/mtd
-%{_up_develdir}/include/net
-%{_up_develdir}/include/pcmcia
-%{_up_develdir}/include/rdma
-%{_up_develdir}/include/scsi
-%{_up_develdir}/include/sound
-%{_up_develdir}/include/trace
-%{_up_develdir}/include/video
-%{_up_develdir}/include/media
-%{_up_develdir}/include/rxrpc
-%{_up_develdir}/include/xen
-%{_up_develdir}/init
-%{_up_develdir}/ipc
-%{_up_develdir}/kernel
-%{_up_develdir}/lib
-%{_up_develdir}/mm
-%{_up_develdir}/net
-%{_up_develdir}/samples
-%{_up_develdir}/scripts
-%{_up_develdir}/security
-%{_up_develdir}/sound
-%{_up_develdir}/usr
+%{_develdir}/include/asm-um
+%{_develdir}/include/config
+%{_develdir}/include/crypto
+%{_develdir}/include/keys
+%{_develdir}/include/linux
+%{_develdir}/include/math-emu
+%{_develdir}/include/mtd
+%{_develdir}/include/net
+%{_develdir}/include/pcmcia
+%{_develdir}/include/rdma
+%{_develdir}/include/scsi
+%{_develdir}/include/sound
+%{_develdir}/include/trace
+%{_develdir}/include/video
+%{_develdir}/include/media
+%{_develdir}/include/rxrpc
+%{_develdir}/include/xen
+%{_develdir}/init
+%{_develdir}/ipc
+%{_develdir}/kernel
+%{_develdir}/lib
+%{_develdir}/mm
+%{_develdir}/net
+%{_develdir}/samples
+%{_develdir}/scripts
+%{_develdir}/security
+%{_develdir}/sound
+%{_develdir}/usr
 %doc README.kernel-sources
 %doc README.MandrivaLinux
-%endif
-
-# kernel-smp-devel
-%if %build_smp
-%files -n %{kname}-smp-devel-%{buildrel}
-%defattr(-,root,root)
-%dir %{_smp_develdir}
-%dir %{_smp_develdir}/arch
-%dir %{_smp_develdir}/include
-%{_smp_develdir}/.config
-%{_smp_develdir}/Documentation
-%{_smp_develdir}/Kbuild
-%{_smp_develdir}/Makefile
-%{_smp_develdir}/Module.symvers
-%{_smp_develdir}/arch/Kconfig
-%ifarch sparc sparc64
-%{_smp_develdir}/arch/sparc
-%{_smp_develdir}/arch/sparc64
-%endif
-%ifarch %{ix86} x86_64
-%{_smp_develdir}/arch/x86
-%endif
-%{_smp_develdir}/arch/um
-%{_smp_develdir}/block
-%{_smp_develdir}/crypto
-%{_smp_develdir}/drivers
-%{_smp_develdir}/fs
-%{_smp_develdir}/include/Kbuild
-%{_smp_develdir}/include/acpi
-%{_smp_develdir}/include/asm
-%{_smp_develdir}/include/asm-generic
-%ifarch sparc sparc64
-%{_smp_develdir}/include/asm-sparc
-%{_smp_develdir}/include/asm-sparc64
-%endif
-%ifarch %{ix86} x86_64
-%{_smp_develdir}/include/asm-x86
-%endif
-%{_smp_develdir}/include/asm-um
-%{_smp_develdir}/include/config
-%{_smp_develdir}/include/crypto
-%{_smp_develdir}/include/keys
-%{_smp_develdir}/include/linux
-%{_smp_develdir}/include/math-emu
-%{_smp_develdir}/include/mtd
-%{_smp_develdir}/include/net
-%{_smp_develdir}/include/pcmcia
-%{_smp_develdir}/include/rdma
-%{_smp_develdir}/include/scsi
-%{_smp_develdir}/include/sound
-%{_smp_develdir}/include/trace
-%{_smp_develdir}/include/video
-%{_smp_develdir}/include/media
-%{_smp_develdir}/include/rxrpc
-%{_smp_develdir}/include/xen
-%{_smp_develdir}/init
-%{_smp_develdir}/ipc
-%{_smp_develdir}/kernel
-%{_smp_develdir}/lib
-%{_smp_develdir}/mm
-%{_smp_develdir}/net
-%{_smp_develdir}/samples
-%{_smp_develdir}/scripts
-%{_smp_develdir}/security
-%{_smp_develdir}/sound
-%{_smp_develdir}/usr
-%doc README.kernel-sources
-%doc README.MandrivaLinux
-#endif %build_devel
-%endif
-%endif
+%endif # kernel_devel
 
 #
-# debug package
+# kernel-debug
 #
-%if %build_up
-%files -n %{kname}-debug-%{buildrel} -f debug_files.%{buildrel}
-%endif
-
-%if %build_smp
-%files -n %{kname}-smp-debug-%{buildrel} -f debug_files.%{buildrel}smp
-%endif
+%if %build_debug
+%files -n %{kname}-debug-%{buildrel} -f kernel_debug_files.up
+%endif # build_debug
 
 
+#
+# kernel-doc
+#
 %if %build_doc
 %files -n %{kname}-doc-%{buildrel}
 %defattr(-,root,root)
 %doc linux-%{tar_ver}/Documentation/*
-%endif
+%endif # kernel_doc
 
-%if %build_up
+#
+# kernel-latest
+#
+%if %build_kernel
 %files -n %{kname}-latest
 %defattr(-,root,root)
-%endif
+%endif # build_kernel
 
-%if %build_smp
-%files -n %{kname}-smp-latest
-%defattr(-,root,root)
-%endif
-
+#
+# kernel-source-latest
+#
 %if %build_source
 %files -n %{kname}-source-latest
 %defattr(-,root,root)
 %endif
 
+#
+# kernel-devel-latest
+#
 %if %build_devel
 %files -n %{kname}-devel-latest
 %defattr(-,root,root)
+%endif # build_devel
 
-%files -n %{kname}-smp-devel-latest
-%defattr(-,root,root)
-%endif
-
+#
+# kernel-debug-latest
+#
+%if %build_debug
 %files -n %{kname}-debug-latest
 %defattr(-,root,root)
+%endif # build_debug
 
-%files -n %{kname}-smp-debug-latest
-%defattr(-,root,root)
-
+#
+# kernel-doc-latest
+#
 %if %build_doc
 %files -n %{kname}-doc-latest
 %defattr(-,root,root)
-%endif
+%endif # build_doc
