@@ -19,17 +19,17 @@
 
 %define kernelversion	2
 %define patchlevel	6
-%define sublevel	26
+%define sublevel	29
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		0
-%define kstable		8
+%define kpatch		rc6
+%define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		16
+%define rt_rel		3
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -468,6 +468,8 @@ popd
 # make sure the kernel has the sublevel we know it has...
 LC_ALL=C perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{sublevel}/" linux-%{tar_ver}/Makefile
 
+# remove localversion-tip file
+rm -f linux-%{tar_ver}/localversion-tip
 
 %build
 # Common target directories
@@ -534,6 +536,9 @@ BuildKernel() {
 	# modules
 	install -d %{temp_modules}/$KernelVer
 	%smake INSTALL_MOD_PATH=%{temp_root} KERNELRELEASE=$KernelVer modules_install 
+
+	# remove /lib/firmware, we use a separate kernel-firmware
+	rm -rf %{temp_root}/lib/firmware
 }
 
 
@@ -904,6 +909,7 @@ exit 0
 %{_kerneldir}/crypto
 %{_kerneldir}/drivers
 %{_kerneldir}/fs
+%{_kerneldir}/firmware
 %{_kerneldir}/include/Kbuild
 %{_kerneldir}/include/acpi
 %{_kerneldir}/include/asm
@@ -915,9 +921,9 @@ exit 0
 %ifarch %{ix86} x86_64
 %{_kerneldir}/include/asm-x86
 %endif
-%{_kerneldir}/include/asm-um
 %{_kerneldir}/include/config
 %{_kerneldir}/include/crypto
+%{_kerneldir}/include/drm
 %{_kerneldir}/include/linux
 %{_kerneldir}/include/math-emu
 %{_kerneldir}/include/net
@@ -974,6 +980,7 @@ exit 0
 %{_develdir}/block
 %{_develdir}/crypto
 %{_develdir}/drivers
+%{_develdir}/firmware
 %{_develdir}/fs
 %{_develdir}/include/Kbuild
 %{_develdir}/include/acpi
@@ -986,9 +993,9 @@ exit 0
 %ifarch %{ix86} x86_64
 %{_develdir}/include/asm-x86
 %endif
-%{_develdir}/include/asm-um
 %{_develdir}/include/config
 %{_develdir}/include/crypto
+%{_develdir}/include/drm
 %{_develdir}/include/keys
 %{_develdir}/include/linux
 %{_develdir}/include/math-emu
