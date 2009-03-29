@@ -23,7 +23,7 @@
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		rc7
+%define kpatch		0
 %define kstable		0
 
 %define ktag		rt
@@ -170,10 +170,10 @@ Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchl
 
 # Mingos patches
 %if %kpatch
-Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.patch.bz2
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2
 #Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2.sign
 %else
-Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.patch.bz2
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2
 #Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2.sign
 %endif
 
