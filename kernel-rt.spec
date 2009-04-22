@@ -32,7 +32,7 @@
 %define rt_rel		8
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -126,7 +126,7 @@ Name:           %{kname}
 Version:        %{kversion}
 Release:        %{rpmrel}
 License: 	GPLv2
-Group: 		System/Kernel and hardware
+Group: 		Development/Kernel
 ExclusiveArch: 	%{ix86} x86_64 sparc64
 ExclusiveOS: 	Linux
 URL: 		http://www.kernel.org/
@@ -213,7 +213,7 @@ Source package to build the Linux kernel.
 Version:  %{fakever}
 Release:  %{fakerel}
 Summary:  The Linux Kernel compiled for SMP machines
-Group: 	  System/Kernel and hardware
+Group: 	  Development/Kernel
 Provides: %kprovides
 Requires: %requires1
 Requires: %requires2
@@ -296,7 +296,7 @@ Version:  %{fakever}
 Release:  %{fakerel}
 Provides: kernel-debug = %{kverrel}
 Summary:  The %{kname} debug files
-Group:    Development/Kernel
+Group:    Development/Debug
 Autoreqprov: no
 Requires: glibc-devel
 
@@ -339,7 +339,7 @@ http://www.mandriva.com/en/security/kernelupdate
 Version:        %{kversion}
 Release:        %{rpmrel}
 Summary: 	Virtual rpm for latest %{kname}
-Group: 	  	System/Kernel and hardware
+Group: 	  	Development/Kernel
 Requires: 	%{kname}-%{buildrel}
 Obsoletes:	%{kname}-smp-latest
 
@@ -359,7 +359,7 @@ latest %{kname} installed...
 Version:        %{kversion}
 Release:        %{rpmrel}
 Summary: 	Virtual rpm for latest %{kname}-source
-Group: 	  	System/Kernel and hardware
+Group: 	  	Development/Kernel
 Requires: 	%{kname}-source-%{buildrel}
 
 %description -n %{kname}-source-latest
@@ -378,7 +378,7 @@ latest %{kname}-source installed...
 Version:        %{kversion}
 Release:        %{rpmrel}
 Summary: 	Virtual rpm for latest %{kname}-devel
-Group: 	  	System/Kernel and hardware
+Group: 	  	Development/Kernel
 Requires: 	%{kname}-devel-%{buildrel}
 Obsoletes:	%{kname}-headers-latest
 Obsoletes:	%{kname}-smp-devel-latest
@@ -400,7 +400,7 @@ latest %{kname}-devel installed...
 Version:        %{kversion}
 Release:        %{rpmrel}
 Summary: 	Virtual rpm for latest %{kname}-debug
-Group: 	  	System/Kernel and hardware
+Group: 	  	Development/Debug
 Requires: 	%{kname}-debug-%{buildrel}
 
 %description -n %{kname}-debug-latest
@@ -418,7 +418,7 @@ latest %{kname}-debug installed...
 Version:        %{kversion}
 Release:        %{rpmrel}
 Summary: 	Virtual rpm for latest %{kname}-doc
-Group: 	  	System/Kernel and hardware
+Group: 	  	Books/Computer books
 Requires: 	%{kname}-doc-%{buildrel}
 
 %description -n %{kname}-doc-latest
