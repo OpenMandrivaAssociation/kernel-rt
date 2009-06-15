@@ -29,10 +29,10 @@
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		16
+%define rt_rel		19
 
 # this is the releaseversion
-%define mdvrelease 	2
+%define mdvrelease 	1
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -178,7 +178,6 @@ Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{
 %endif
 
 # LKML's patches
-Patch100:	smi-detector.patch
 
 # MDV Patches
 
@@ -447,7 +446,6 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-%patch100 -p1
 
 # MDV Patches
 
