@@ -19,17 +19,17 @@
 
 %define kernelversion	2
 %define patchlevel	6
-%define sublevel	29
+%define sublevel	31
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		0
-%define kstable		6
+%define kpatch		rc4
+%define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		23
+%define rt_rel		1
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -702,7 +702,7 @@ chmod -R a+rX %{target_source}
 # we remove all the source files that we don't ship
 
 # first architecture files
-for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68knommu mn10300 parisc powerpc ppc sh sh64 s390 v850 xtensa; do
+for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips microblaze m32r m68k m68knommu mn10300 parisc powerpc ppc sh sh64 s390 v850 xtensa; do
 	rm -rf %{target_source}/arch/$i
 	rm -rf %{target_source}/include/asm-$i
 
@@ -948,6 +948,7 @@ exit 0
 %{_kerneldir}/security
 %{_kerneldir}/scripts
 %{_kerneldir}/sound
+%{_kerneldir}/tools
 %{_kerneldir}/usr
 %{_kerneldir}/virt/kvm
 %doc README.kernel-sources
@@ -1020,6 +1021,7 @@ exit 0
 %{_develdir}/scripts
 %{_develdir}/security
 %{_develdir}/sound
+%{_develdir}/tools
 %{_develdir}/usr
 %doc README.kernel-sources
 %doc README.MandrivaLinux
