@@ -32,7 +32,7 @@
 %define rt_rel		1
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -557,11 +557,13 @@ SaveDevel() {
 	%ifarch %{ix86} x86_64
 		cp -fR arch/x86/kernel/asm-offsets.{c,s} $DevelRoot/arch/x86/kernel/
 		cp -fR arch/x86/kernel/asm-offsets_{32,64}.c $DevelRoot/arch/x86/kernel/
+		cp -fR arch/x86/include $DevelRoot/arch/x86/
 	%else
 		cp -fR arch/%{target_arch}/kernel/asm-offsets.{c,s} $DevelRoot/arch/%{target_arch}/kernel/
+		cp -fR arch/%{target_arch}/include $DevelRoot/arch/%{target_arch}/
 	%endif
 	cp -fR .config Module.symvers $DevelRoot
-	
+
         # Needed for truecrypt build (Danny)
 	cp -fR drivers/md/dm.h $DevelRoot/drivers/md/
 
