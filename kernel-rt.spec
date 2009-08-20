@@ -32,7 +32,7 @@
 %define rt_rel		5
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -139,7 +139,9 @@ URL: 		http://www.kernel.org/
 Source0:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.bz2
 Source1:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.bz2.sign
 # This is for disabling mrproper on -devel rpms
-Source2:		disable-mrproper-in-devel-rpms.patch
+Source2:	disable-mrproper-in-devel-rpms.patch
+# This disables removal of bounds.h and asm-offsets.h in -devel rpms (from kernel-linus)
+SOURCE3:	kbuild-really-dont-remove-bounds-asm-offsets-headers.patch
 
 Source4:  README.kernel-sources
 Source5:  README.MandrivaLinux
@@ -566,6 +568,16 @@ SaveDevel() {
 
         # Needed for truecrypt build (Danny)
 	cp -fR drivers/md/dm.h $DevelRoot/drivers/md/
+
+	# Needed for external dvb tree (#41418)
+	cp -fR drivers/media/dvb/dvb-core/*.h %{temp_devel}/drivers/media/dvb/dvb-core/
+	cp -fR drivers/media/dvb/frontends/lgdt330x.h %{temp_devel}/drivers/media/dvb/frontends/
+
+	# add acpica header files, needed for fglrx build
+	cp -fR drivers/acpi/acpica/*.h %{temp_devel}/drivers/acpi/acpica/
+
+	# Disable bounds.h and asm-offsets.h removal
+	patch -p1 -d %{temp_devel} -i %{SOURCE3}
 
 	# fix permissions
 	chmod -R a+rX $DevelRoot
