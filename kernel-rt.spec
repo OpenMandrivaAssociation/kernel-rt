@@ -29,10 +29,10 @@
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		20
+%define rt_rel		21
 
 # this is the releaseversion
-%define mdvrelease 	2
+%define mdvrelease 	1
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
