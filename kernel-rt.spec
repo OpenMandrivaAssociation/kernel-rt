@@ -19,17 +19,17 @@
 
 %define kernelversion	2
 %define patchlevel	6
-%define sublevel	31
+%define sublevel	33
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		12
+%define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		21
+%define rt_rel		3
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -716,7 +716,7 @@ chmod -R a+rX %{target_source}
 # we remove all the source files that we don't ship
 
 # first architecture files
-for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips microblaze m32r m68k m68knommu mn10300 parisc powerpc ppc sh sh64 s390 v850 xtensa; do
+for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips microblaze m32r m68k m68knommu mn10300 parisc powerpc ppc score sh sh64 s390 v850 xtensa; do
 	rm -rf %{target_source}/arch/$i
 	rm -rf %{target_source}/include/asm-$i
 
@@ -768,8 +768,7 @@ patch -p1 -d %{target_devel} -i %{SOURCE2}
 %endif # build_kernel
 %endif # build_devel
 
-#endif %build_source
-%endif
+%endif # build_source
 
 # gzipping modules
 find %{target_modules} -name "*.ko" | xargs gzip -9
@@ -800,6 +799,14 @@ for i in *; do
 done
 popd
 
+%if %build_source
+# make sure we are in the directory
+pushd %{target_source}
+# kernel-source is shipped as an unprepared tree
+%smake -s mrproper
+# back to previous directory
+popd
+%endif # build_source
 
 
 ###
@@ -899,7 +906,8 @@ exit 0
 %dir %{_kerneldir}
 %dir %{_kerneldir}/arch
 %dir %{_kerneldir}/include
-%{_kerneldir}/.config
+# this file is removed by make mrproper
+#{_kerneldir}/.config
 %{_kerneldir}/.gitignore
 %{_kerneldir}/COPYING
 %{_kerneldir}/CREDITS
@@ -926,31 +934,26 @@ exit 0
 %{_kerneldir}/firmware
 %{_kerneldir}/include/Kbuild
 %{_kerneldir}/include/acpi
-%{_kerneldir}/include/asm
 %{_kerneldir}/include/asm-generic
-%ifarch sparc sparc64
-%{_kerneldir}/include/asm-sparc
-%{_kerneldir}/include/asm-sparc64
-%endif
-%ifarch %{ix86} x86_64
-%{_kerneldir}/include/asm-x86
-%endif
-%{_kerneldir}/include/config
+# this directory is not need in source rpm
+#{_kerneldir}/include/config
 %{_kerneldir}/include/crypto
 %{_kerneldir}/include/drm
+# this directory is not need in source rpm
+#{_kerneldir}/include/generated
+%{_kerneldir}/include/keys
 %{_kerneldir}/include/linux
 %{_kerneldir}/include/math-emu
-%{_kerneldir}/include/net
-%{_kerneldir}/include/pcmcia
-%{_kerneldir}/include/scsi
-%{_kerneldir}/include/trace
-%{_kerneldir}/include/sound
-%{_kerneldir}/include/video
 %{_kerneldir}/include/media
 %{_kerneldir}/include/mtd
-%{_kerneldir}/include/rxrpc
-%{_kerneldir}/include/keys
+%{_kerneldir}/include/net
+%{_kerneldir}/include/pcmcia
 %{_kerneldir}/include/rdma
+%{_kerneldir}/include/rxrpc
+%{_kerneldir}/include/scsi
+%{_kerneldir}/include/sound
+%{_kerneldir}/include/trace
+%{_kerneldir}/include/video
 %{_kerneldir}/include/xen
 %{_kerneldir}/init
 %{_kerneldir}/ipc
@@ -999,31 +1002,24 @@ exit 0
 %{_develdir}/fs
 %{_develdir}/include/Kbuild
 %{_develdir}/include/acpi
-%{_develdir}/include/asm
 %{_develdir}/include/asm-generic
-%ifarch sparc sparc64
-%{_develdir}/include/asm-sparc
-%{_develdir}/include/asm-sparc64
-%endif
-%ifarch %{ix86} x86_64
-%{_develdir}/include/asm-x86
-%endif
 %{_develdir}/include/config
 %{_develdir}/include/crypto
 %{_develdir}/include/drm
+%{_develdir}/include/generated
 %{_develdir}/include/keys
 %{_develdir}/include/linux
 %{_develdir}/include/math-emu
+%{_develdir}/include/media
 %{_develdir}/include/mtd
 %{_develdir}/include/net
 %{_develdir}/include/pcmcia
 %{_develdir}/include/rdma
+%{_develdir}/include/rxrpc
 %{_develdir}/include/scsi
 %{_develdir}/include/sound
 %{_develdir}/include/trace
 %{_develdir}/include/video
-%{_develdir}/include/media
-%{_develdir}/include/rxrpc
 %{_develdir}/include/xen
 %{_develdir}/init
 %{_develdir}/ipc
@@ -1037,6 +1033,7 @@ exit 0
 %{_develdir}/sound
 %{_develdir}/tools
 %{_develdir}/usr
+%{_develdir}/virt/kvm
 %doc README.kernel-sources
 %doc README.MandrivaLinux
 %endif # kernel_devel
@@ -1072,7 +1069,7 @@ exit 0
 %if %build_source
 %files -n %{kname}-source-latest
 %defattr(-,root,root)
-%endif
+%endif # build_source
 
 #
 # kernel-devel-latest
