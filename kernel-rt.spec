@@ -29,10 +29,10 @@
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		16
+%define rt_rel		17
 
 # this is the releaseversion
-%define mdvrelease 	2
+%define mdvrelease 	1
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -180,8 +180,6 @@ Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{
 %endif
 
 # LKML's patches
-Patch100:	fix_fs_ecryptfs_inode_c.patch
-Patch101:	fix_namei.patch
 Patch102:	gpu-drm-nouveau-git-20100316.patch 
 Patch103:	gpu-drm-nouveau-fix-missing-locking.patch
 
@@ -452,8 +450,6 @@ pushd %src_dir
 %patch2 -p1
 
 # LKML's patches
-%patch100 -p1
-%patch101 -p1
 %patch102 -p1
 %patch103 -p1
 
