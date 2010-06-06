@@ -32,7 +32,7 @@
 %define rt_rel		22
 
 # this is the releaseversion
-%define mdvrelease 	1
+%define mdvrelease 	2
 
 # This is only to make life easier for people that creates derivated kernels
 # a.k.a name it kernel-tmb :)
@@ -184,7 +184,7 @@ Patch102:	gpu-drm-nouveau-git-20100316.patch
 Patch103:	gpu-drm-nouveau-fix-missing-locking.patch
 
 # MDV Patches
-
+Patch201:	video-fb-fix-unregister_framebuffer-fb_destroy.patch
 
 #END
 ####################################################################
@@ -454,6 +454,7 @@ pushd %src_dir
 %patch103 -p1
 
 # MDV Patches
+%patch201 -p1
 
 popd
 
