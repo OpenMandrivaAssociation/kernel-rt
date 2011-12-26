@@ -17,19 +17,18 @@
 #
 # if you try to understand kernel numbering, read docs/kernel_naming
 
-%define kernelversion	2
-%define patchlevel	6
-%define sublevel	33
+%define kernelversion	3
+%define patchlevel	2
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		0
-%define kstable		7
+%define kpatch		rc6
+%define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		29
+%define rt_rel		9
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -45,20 +44,16 @@
 %define rpmrel		%mkrel 1.%{ktag}%{rt_rel}.%{mdvrelease}
 %endif
 
-# theese two never change, they are used to fool rpm/urpmi/smart
-%define fakever		1
-%define fakerel		%mkrel 1
-
-# When we are using a pre/rc patch, the tarball is a sublevel -1
+# When we are using a pre/rc patch, the tarball is a patchlevel -1
 %if %kpatch
-%define kversion  	%{kernelversion}.%{patchlevel}.%{sublevel}
-%define tar_ver	  	%{kernelversion}.%{patchlevel}.%(expr %{sublevel} - 1)
+%define kversion  	%{kernelversion}.%{patchlevel}
+%define tar_ver	  	%{kernelversion}.%(expr %{patchlevel} - 1)
 %else
 %if %kstable
-%define kversion  	%{kernelversion}.%{patchlevel}.%{sublevel}.%{kstable}
-%define tar_ver   	%{kernelversion}.%{patchlevel}.%{sublevel}
+%define kversion  	%{kernelversion}.%{patchlevel}.%{kstable}
+%define tar_ver   	%{kernelversion}.%{patchlevel}
 %else
-%define kversion  	%{kernelversion}.%{patchlevel}.%{sublevel}
+%define kversion  	%{kernelversion}.%{patchlevel}
 %define tar_ver   	%{kversion}
 %endif
 %endif
@@ -74,12 +69,13 @@
 %define buildrel        %{kversion}-%{buildrpmrel}
 
 %define rt_info NOTE: This kernel has no Mandriva patches and no third-party drivers, \
-only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org kernels.
+only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org \
+kernels.
 
 # having different top level names for packges means that you have to remove them by hard :(
 %define top_dir_name    %{kname}-%{_arch}
 
-%define build_dir       ${RPM_BUILD_DIR}/%{top_dir_name}
+%define build_dir       %{_builddir}/%{top_dir_name}
 %define src_dir         %{build_dir}/linux-%{tar_ver}
 
 # disable useless debug rpms...
@@ -118,7 +114,7 @@ only Ingo Molnar -rt (realtime) series patches applied to vanille kernel.org ker
 
 # Aliases for amd64 builds (better make source links?)
 %define target_cpu	%(echo %{_target_cpu} | sed -e "s/amd64/x86_64/")
-%define target_arch	%(echo %{_arch} | sed -e "s/amd64/x86_64/" -e "s/sparc/%{_target_cpu}/" -e "s/i386/x86/" -e "s/x86_64/x86/")
+%define target_arch	%(echo %{_arch} | sed -e "s/amd64/x86_64/" -e "s/i386/x86/" -e "s/x86_64/x86/")
 
 # src.rpm description
 Summary: 	The Linux kernel (the core of the Linux operating system)
@@ -127,8 +123,7 @@ Version:        %{kversion}
 Release:        %{rpmrel}
 License: 	GPLv2
 Group: 		Development/Kernel
-ExclusiveArch: 	%{ix86} x86_64 sparc64
-ExclusiveOS: 	Linux
+ExclusiveArch: 	%{ix86} x86_64
 URL: 		http://www.kernel.org/
 
 ####################################################################
@@ -136,19 +131,18 @@ URL: 		http://www.kernel.org/
 # Sources
 #
 ### This is for full SRC RPM
-Source0:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.bz2
-Source1:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.bz2.sign
+Source0:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.xz
+Source1:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.sign
 # This is for disabling mrproper on -devel rpms
 Source2:	disable-mrproper-in-devel-rpms.patch
 # This disables removal of bounds.h and asm-offsets.h in -devel rpms (from kernel-linus)
-SOURCE3:	kbuild-really-dont-remove-bounds-asm-offsets-headers.patch
+#SOURCE3:	kbuild-really-dont-remove-bounds-asm-offsets-headers.patch
 
 Source4:  README.kernel-sources
 Source5:  README.MandrivaLinux
 
 Source20: i386.config
 Source21: x86_64.config
-Source22: sparc64.config
 
 
 ####################################################################
@@ -162,29 +156,29 @@ Source22: sparc64.config
 # Pre linus patch: ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing
 
 %if %kpatch
-Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing/patch-%{kernelversion}.%{patchlevel}.%{sublevel}-%{kpatch}.bz2
-Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing/patch-%{kernelversion}.%{patchlevel}.%{sublevel}-%{kpatch}.bz2.sign
+Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing/patch-%{kernelversion}.%{patchlevel}-%{kpatch}.xz
+Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing/patch-%{kernelversion}.%{patchlevel}-%{kpatch}.sign
 %endif
 %if %kstable
-Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/patch-%{kversion}.bz2
-Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/patch-%{kversion}.bz2.sign
+Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/patch-%{kversion}.xz
+Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/patch-%{kversion}.sign
 %endif
 
 # Mingos patches
 %if %kpatch
-Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2
-#Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.bz2.sign
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.patch.xz
+Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.patch.sign
 %else
-Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2
-#Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/patch-%{kversion}-%{ktag}%{rt_rel}.bz2.sign
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{ktag}%{rt_rel}.patch.xz
+Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{ktag}%{rt_rel}.patch.sign
 %endif
 
 # LKML's patches
-Patch102:	gpu-drm-nouveau-git-20100316.patch 
-Patch103:	gpu-drm-nouveau-fix-missing-locking.patch
+#Patch102:	gpu-drm-nouveau-git-20100316.patch 
+#Patch103:	gpu-drm-nouveau-fix-missing-locking.patch
 
 # MDV Patches
-Patch201:	video-fb-fix-unregister_framebuffer-fb_destroy.patch
+#Patch201:	video-fb-fix-unregister_framebuffer-fb_destroy.patch
 
 #END
 ####################################################################
@@ -213,10 +207,10 @@ Source package to build the Linux kernel.
 # kernel: Symmetric MultiProcessing kernel
 #
 %if %build_kernel
-%package -n %{kname}-%{buildrel}
-Version:  %{fakever}
-Release:  %{fakerel}
+%package -n %{kname}
 Summary:  The Linux Kernel compiled for SMP machines
+Version:  %{kversion}
+Release:  %{rpmrel}
 Group: 	  Development/Kernel
 Provides: %kprovides
 Requires: %requires1
@@ -225,17 +219,7 @@ Requires: %requires3
 Requires: %requires4
 Requires: %requires5
 
-%description -n %{kname}-%{buildrel}
-This package includes a SMP version of the Linux %{kversion} kernel. It is
-required only on machines with two or more CPUs, although it should work
-fine on single-CPU boxes.
-This kernel relies on in-kernel smp alternatives to switch between 
-up & smp mode depending on detected hardware. To force the kernel
-to boot in single processor mode, use the "nosmp" boot parameter.
-
-For instructions for update, see:
-http://www.mandriva.com/en/security/kernelupdate
-
+%description -n %{kname}
 %{rt_info}
 %endif # build_kernel
 
@@ -243,9 +227,9 @@ http://www.mandriva.com/en/security/kernelupdate
 # kernel-source: kernel sources
 #
 %if %build_source
-%package -n %{kname}-source-%{buildrel}
-Version:  %{fakever}
-Release:  %{fakerel}
+%package -n %{kname}-source
+Version:  %{kversion}
+Release:  %{rpmrel}
 Provides: %{kname}-source, kernel-source = %{kverrel}, kernel-devel = %{kverrel}
 Provides: %{kname}-source-%{kernelversion}.%{patchlevel}
 Requires: glibc-devel, ncurses-devel, make, gcc, perl
@@ -253,16 +237,13 @@ Summary:  The source code for the Linux kernel
 Group:    Development/Kernel
 Autoreqprov: no
 
-%description -n %{kname}-source-%{buildrel}
+%description -n %{kname}-source
 The %{kname}-source package contains the source code files for the Linux 
 kernel. Theese source files are only needed if you want to build your own 
 custom kernel that is better tuned to your particular hardware.
 
 If you only want the files needed to build 3rdparty (nVidia, Ati, dkms-*,...)
 drivers against, install the *-devel-* rpm that is matching your kernel.
-
-For instructions for update, see:
-http://www.mandriva.com/en/security/kernelupdate
 
 %{rt_info}
 %endif # build_source
@@ -272,21 +253,21 @@ http://www.mandriva.com/en/security/kernelupdate
 # kernel-devel: stripped kernel sources
 #
 %if %build_devel
-%package -n %{kname}-devel-%{buildrel}
-Version:  %{fakever}
-Release:  %{fakerel}
+%package -n %{kname}-devel
+Version:  %{kversion}
+Release:  %{rpmrel}
 Provides: kernel-devel = %{kverrel}
 Summary:  The %{kname} devel files for 3rdparty modules build
 Group:    Development/Kernel
 Autoreqprov: no
 Requires: glibc-devel, ncurses-devel, make, gcc, perl
 
-%description -n %{kname}-devel-%{buildrel}
+%description -n %{kname}-devel
 This package contains the kernel-devel files that should be enough to build 
-3rdparty drivers against for use with the %{kname}-%{buildrel}.
+3rdparty drivers against for use with the %{kname}.
 
 If you want to build your own kernel, you need to install the full 
-%{kname}-source-%{buildrel} rpm.
+%{kname}-source rpm.
 
 %{rt_info}
 %endif # build_devel
@@ -295,16 +276,17 @@ If you want to build your own kernel, you need to install the full
 # kernel-debug: unstripped kernel vmlinux
 #
 %if %build_debug
-%package -n %{kname}-debug-%{buildrel}
-Version:  %{fakever}
-Release:  %{fakerel}
+%package -n %{kname}-debuginfo
+Version:  %{kversion}
+Release:  %{rpmrel}
 Provides: kernel-debug = %{kverrel}
+Provides: kernel-debuginfo = %{kverrel}
 Summary:  The %{kname} debug files
 Group:    Development/Debug
 Autoreqprov: no
 Requires: glibc-devel
 
-%description -n %{kname}-debug-%{buildrel}
+%description -n %{kname}-debuginfo
 This package contains the kernel-debug files that should be enough to 
 use debugging/monitoring tool (like systemtap, oprofile, ...)
 
@@ -315,21 +297,18 @@ use debugging/monitoring tool (like systemtap, oprofile, ...)
 # kernel-doc: documentation for the Linux kernel
 #
 %if %build_doc
-%package -n %{kname}-doc-%{buildrel}
-Version:  %{fakever}
-Release:  %{fakerel}
+%package -n %{kname}-doc
+Version:  %{kversion}
+Release:  %{rpmrel}
 Summary:  Various documentation bits found in the kernel source
 Group:    Books/Computer books
 
-%description -n %{kname}-doc-%{buildrel}
+%description -n %{kname}-doc
 This package contains documentation files form the kernel source. Various
 bits of information about the Linux kernel and the device drivers shipped
 with it are documented in these files. You also might want install this
 package if you need a reference to the options that can be passed to Linux
 kernel modules at load time.
-
-For instructions for update, see:
-http://www.mandriva.com/en/security/kernelupdate
 
 %{rt_info}
 %endif # build_doc
@@ -338,99 +317,99 @@ http://www.mandriva.com/en/security/kernelupdate
 #
 # kernel-latest: virtual rpm
 #
-%if %build_kernel
-%package -n %{kname}-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}
-Group: 	  	Development/Kernel
-Requires: 	%{kname}-%{buildrel}
-Obsoletes:	%{kname}-smp-latest
-
-%description -n %{kname}-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname} installed...
-
-%{rt_info}
-%endif # build_kernel
+#%if %build_kernel
+#%package -n %{kname}-latest
+#Version:        %{kversion}
+#Release:        %{rpmrel}
+#Summary: 	Virtual rpm for latest %{kname}
+#Group: 	  	Development/Kernel
+#Requires: 	%{kname} >= %{EVRD}
+#Obsoletes:	%{kname}-smp-latest
+#
+#%description -n %{kname}-latest
+#This package is a virtual rpm that aims to make sure you always have the
+#latest %{kname} installed...
+#
+#%{rt_info}
+#%endif # build_kernel
 
 
 #
 # kernel-source-latest: virtual rpm
 #
-%if %build_source
-%package -n %{kname}-source-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}-source
-Group: 	  	Development/Kernel
-Requires: 	%{kname}-source-%{buildrel}
-
-%description -n %{kname}-source-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname}-source installed...
-
-%{rt_info}
-%endif # build_source
+#%if %build_source
+#%package -n %{kname}-source-latest
+#Version:        %{kversion}
+#Release:        %{rpmrel}
+#Summary: 	Virtual rpm for latest %{kname}-source
+#Group: 	  	Development/Kernel
+#Requires: 	%{kname}-source
+#
+#%description -n %{kname}-source-latest
+#This package is a virtual rpm that aims to make sure you always have the
+#latest %{kname}-source installed...
+#
+#%{rt_info}
+#%endif # build_source
 
 
 #
 # kernel-devel-latest: virtual rpm
 #
-%if %build_devel
-%package -n %{kname}-devel-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}-devel
-Group: 	  	Development/Kernel
-Requires: 	%{kname}-devel-%{buildrel}
-Obsoletes:	%{kname}-headers-latest
-Obsoletes:	%{kname}-smp-devel-latest
-Obsoletes:	%{kname}-smp-headers-latest
-
-%description -n %{kname}-devel-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname}-devel installed...
-
-%{rt_info}
-%endif # build_devel
+#%if %build_devel
+#%package -n %{kname}-devel-latest
+#Version:        %{kversion}
+#Release:        %{rpmrel}
+#Summary: 	Virtual rpm for latest %{kname}-devel
+#Group: 	  	Development/Kernel
+#Requires: 	%{kname}-devel
+#Obsoletes:	%{kname}-headers-latest
+#Obsoletes:	%{kname}-smp-devel-latest
+#Obsoletes:	%{kname}-smp-headers-latest
+#
+#%description -n %{kname}-devel-latest
+#This package is a virtual rpm that aims to make sure you always have the
+#latest %{kname}-devel installed...
+#
+#%{rt_info}
+#%endif # build_devel
 
 
 #
 # kernel-debug-latest: virtual rpm
 #
-%if %build_debug
-%package -n %{kname}-debug-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}-debug
-Group: 	  	Development/Debug
-Requires: 	%{kname}-debug-%{buildrel}
-
-%description -n %{kname}-debug-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname}-debug installed...
-
-%{rt_info}
-%endif # build_debug
+#%if %build_debug
+#%package -n %{kname}-debuginfo-latest
+#Version:        %{kversion}
+#Release:        %{rpmrel}
+#Summary: 	Virtual rpm for latest %{kname}-debuginfo
+#Group: 	  	Development/Debug
+#Requires: 	%{kname}-debuginfo
+#
+#%description -n %{kname}-debuginfo-latest
+#This package is a virtual rpm that aims to make sure you always have the
+#latest %{kname}-debuginfo installed...
+#
+#%{rt_info}
+#%endif # build_debug
 
 #
 # kernel-doc-latest: virtual rpm
 #
-%if %build_doc
-%package -n %{kname}-doc-latest
-Version:        %{kversion}
-Release:        %{rpmrel}
-Summary: 	Virtual rpm for latest %{kname}-doc
-Group: 	  	Books/Computer books
-Requires: 	%{kname}-doc-%{buildrel}
-
-%description -n %{kname}-doc-latest
-This package is a virtual rpm that aims to make sure you always have the
-latest %{kname}-doc installed...
-
-%{rt_info}
-%endif
+#%if %build_doc
+#%package -n %{kname}-doc-latest
+#Version:        %{kversion}
+#Release:        %{rpmrel}
+#Summary: 	Virtual rpm for latest %{kname}-doc
+#Group: 	  	Books/Computer books
+#Requires: 	%{kname}-doc
+#
+#%description -n %{kname}-doc-latest
+#This package is a virtual rpm that aims to make sure you always have the
+#latest %{kname}-doc installed...
+#
+#%{rt_info}
+#%endif
 
 #
 # End packages - here begins build stage
@@ -440,21 +419,23 @@ latest %{kname}-doc installed...
 
 pushd %src_dir
 %if %kpatch
-%patch1 -p1
+xzcat %{PATCH1} | patch -p1
 %endif
 %if %kstable
-%patch1 -p1
+xzcat %{PATCH1} | patch -p1
+#patch1 -p1
 %endif
 
 # Mingo's patch
-%patch2 -p1
+xzcat %{PATCH2} | patch -p1
+#patch2 -p1
 
 # LKML's patches
-%patch102 -p1
-%patch103 -p1
+#patch102 -p1
+#patch103 -p1
 
 # MDV Patches
-%patch201 -p1
+#patch201 -p1
 
 popd
 
@@ -465,7 +446,7 @@ popd
 # Setup Begin
 #
 
-pushd ${RPM_SOURCE_DIR}
+pushd %{_sourcedir}
 
 #
 # Copy our defconfigs into place.
@@ -473,7 +454,7 @@ cp -f %{_arch}.config     %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defc
 popd
 
 # make sure the kernel has the sublevel we know it has...
-LC_ALL=C perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{sublevel}/" linux-%{tar_ver}/Makefile
+#LC_ALL=C perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{sublevel}/" linux-%{tar_ver}/Makefile
 
 # remove localversion-tip file
 rm -f linux-%{tar_ver}/localversion-tip
@@ -532,13 +513,8 @@ BuildKernel() {
 	install -m 644 System.map %{temp_boot}/System.map-$KernelVer
 	install -m 644 .config %{temp_boot}/config-$KernelVer
 
-	%ifarch sparc64
-	gzip -9c vmlinux > %{temp_boot}/vmlinuz-$KernelVer
-	cp -f vmlinux %{temp_boot}/vmlinux-$KernelVer
-	%else
 	cp -f arch/%{target_arch}/boot/bzImage %{temp_boot}/vmlinuz-$KernelVer
 	cp -f vmlinux %{temp_boot}/vmlinux-$KernelVer
-	%endif
 
 	# modules
 	install -d %{temp_modules}/$KernelVer
@@ -582,7 +558,7 @@ SaveDevel() {
 	cp -fR drivers/acpi/acpica/*.h %{temp_devel}/drivers/acpi/acpica/
 
 	# Disable bounds.h and asm-offsets.h removal
-	patch -p1 -d %{temp_devel} -i %{SOURCE3}
+	#patch -p1 -d %{temp_devel} -i %{SOURCE3}
 
 	# fix permissions
 	chmod -R a+rX $DevelRoot
@@ -629,9 +605,9 @@ CreateFiles() {
 	echo "%{_bootdir}/System.map-${kernversion}" >> $output
 	echo "%dir %{_modulesdir}/${kernversion}/" >> $output
 	echo "%{_modulesdir}/${kernversion}/kernel" >> $output
-	echo "%{_modulesdir}/${kernversion}/modules.*" >> $output
-	echo "%doc README.kernel-sources" >> $output
-	echo "%doc README.MandrivaLinux" >> $output
+#	echo "%{_modulesdir}/${kernversion}/modules.*" >> $output
+#	echo "%doc README.kernel-sources" >> $output
+#	echo "%doc README.MandrivaLinux" >> $output
 	cat ../kernel_exclude_debug_files.$flavour >> $output
 }
 
@@ -721,7 +697,7 @@ chmod -R a+rX %{target_source}
 # we remove all the source files that we don't ship
 
 # first architecture files
-for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips microblaze m32r m68k m68knommu mn10300 parisc powerpc ppc score sh sh64 s390 v850 xtensa; do
+for i in alpha arm arm26 avr32 blackfin cris frv h8300 hexagon ia64 mips microblaze m32r m68k m68knommu mn10300 openrisc parisc powerpc ppc score sh sh64 s390 sparc64 tile unicore32 v850 xtensa; do
 	rm -rf %{target_source}/arch/$i
 	rm -rf %{target_source}/include/asm-$i
 
@@ -738,17 +714,6 @@ for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips microblaze m32r
 done
 
 # remove arch files based on target arch
-%ifnarch %{ix86} x86_64
-	rm -rf %{target_source}/arch/x86
-	rm -rf %{target_source}/include/asm-x86
-%if %build_devel
-%if %build_kernel
-	rm -rf %{target_devel}/arch/x86
-	rm -rf %{target_devel}/include/asm-x86
-%endif # build_kernel
-%endif # build_devel
-%endif # ifnarch %{ix86} x86_64
-%ifnarch sparc sparc64
 	rm -rf %{target_source}/arch/sparc
 	rm -rf %{target_source}/arch/sparc64
 	rm -rf %{target_source}/include/asm-sparc
@@ -761,7 +726,6 @@ done
 	rm -rf %{target_devel}/include/asm-sparc64
 %endif # build_kernel
 %endif # build_devel
-%endif # ifnarch sparc sparc64
 
 # other misc files
 rm -f %{target_source}/{.config.old,.config.cmd,.tmp_gas_check,.mailmap,.missing-syscalls.d,.mm,arch/.gitignore}
@@ -776,7 +740,7 @@ patch -p1 -d %{target_devel} -i %{SOURCE2}
 %endif # build_source
 
 # gzipping modules
-find %{target_modules} -name "*.ko" | xargs gzip -9
+#find %{target_modules} -name "*.ko" | xargs gzip -9
 
 # We used to have a copy of PrepareKernel here
 # Now, we make sure that the thing in the linux dir is what we want it to be
@@ -788,21 +752,21 @@ done
 # sniff, if we gzipped all the modules, we change the stamp :(
 # we really need the depmod -ae here
 
-pushd %{target_modules}
-for i in *; do
-	/sbin/depmod -u -ae -b %{buildroot} -r -F %{target_boot}/System.map-$i $i
-	echo $?
-done
+#pushd %{target_modules}
+#for i in *; do
+#	/sbin/depmod -u -ae -b %{buildroot} -r -F %{target_boot}/System.map-$i $i
+#	echo $?
+#done
 
-for i in *; do
-	pushd $i
-	echo "Creating module.description for $i"
-	modules=`find . -name "*.ko.gz"`
-	echo $modules | xargs /sbin/modinfo-25 \
-	| perl -lne 'print "$name\t$1" if $name && /^description:\s*(.*)/; $name = $1 if m!^filename:\s*(.*)\.k?o!; $name =~ s!.*/!!' > modules.description
-	popd
-done
-popd
+#for i in *; do
+#	pushd $i
+#	echo "Creating module.description for $i"
+#	modules=`find . -name "*.ko.gz"`
+#	echo $modules | xargs /sbin/modinfo-25 \
+#	| perl -lne 'print "$name\t$1" if $name && /^description:\s*(.*)/; $name = $1 if m!^filename:\s*(.*)\.k?o!; $name =~ s!.*/!!' > modules.description
+#	popd
+#done
+#popd
 
 %if %build_source
 # make sure we are in the directory
@@ -815,24 +779,11 @@ popd
 
 
 ###
-### clean
-###
-
-%clean
-rm -rf %{buildroot}
-# We don't want to remove this, the whole reason of its existence is to be 
-# able to do several rpm --short-circuit -bi for testing install 
-# phase without repeating compilation phase
-#rm -rf %{temp_root} 
-
-
-
-###
 ### scripts
 ###
 
 ### kernel
-%preun -n %{kname}-%{buildrel}
+%preun -n %{kname}
 /sbin/installkernel -R %{buildrel}
 if [ -L /lib/modules/%{buildrel}/build ]; then
     rm -f /lib/modules/%{buildrel}/build
@@ -842,26 +793,26 @@ if [ -L /lib/modules/%{buildrel}/source ]; then
 fi
 exit 0
 
-%post -n %{kname}-%{buildrel}
+%post -n %{kname}
 /sbin/installkernel -L %{buildrel}
 if [ -d /usr/src/%{kname}-devel-%{buildrel} ]; then
     ln -sf /usr/src/%{kname}-devel-%{buildrel} /lib/modules/%{buildrel}/build
     ln -sf /usr/src/%{kname}-devel-%{buildrel} /lib/modules/%{buildrel}/source
 fi
 
-%postun -n %{kname}-%{buildrel}
+%postun -n %{kname}
 /sbin/kernel_remove_initrd %{buildrel}
 
 
 ### kernel-devel
-%post -n %{kname}-devel-%{buildrel}
+%post -n %{kname}-devel
 # place /build and /source symlinks in place.
 if [ -d /lib/modules/%{buildrel} ]; then
     ln -sf /usr/src/%{kname}-devel-%{buildrel} /lib/modules/%{buildrel}/build
     ln -sf /usr/src/%{kname}-devel-%{buildrel} /lib/modules/%{buildrel}/source
 fi
 
-%preun -n %{kname}-devel-%{buildrel}
+%preun -n %{kname}-devel
 # we need to delete <modules>/{build,source} at uninstall
 if [ -L /lib/modules/%{buildrel}/build ]; then
     rm -f /lib/modules/%{buildrel}/build
@@ -873,7 +824,7 @@ exit 0
 
 
 ### kernel-source
-%post -n %{kname}-source-%{buildrel}
+%post -n %{kname}-source
 for i in /lib/modules/%{buildrel}*; do
 	if [ -d $i ]; then
 	        rm -f $i/{build,source}
@@ -882,7 +833,7 @@ for i in /lib/modules/%{buildrel}*; do
 	fi
 done
 								
-%preun -n %{kname}-source-%{buildrel}
+%preun -n %{kname}-source
 for i in /lib/modules/%{buildrel}/{build,source}; do
 	if [ -L $i ]; then
 		rm -f $i
@@ -899,14 +850,14 @@ exit 0
 # kernel
 #
 %if %build_kernel
-%files -n %{kname}-%{buildrel} -f kernel_files.%{buildrel}
+%files -n %{kname} -f kernel_files.%{buildrel}
 %endif # build_kernel
 
 #
 # kernel-source
 #
 %if %build_source
-%files -n %{kname}-source-%{buildrel}
+%files -n %{kname}-source
 %defattr(-,root,root)
 %dir %{_kerneldir}
 %dir %{_kerneldir}/arch
@@ -924,10 +875,6 @@ exit 0
 %{_kerneldir}/REPORTING-BUGS
 #{_kerneldir}/Module.markers
 %{_kerneldir}/arch/Kconfig
-%ifarch sparc sparc64
-%{_kerneldir}/arch/sparc
-%{_kerneldir}/arch/sparc64
-%endif
 %ifarch %{ix86} x86_64
 %{_kerneldir}/arch/x86
 %endif
@@ -950,6 +897,7 @@ exit 0
 %{_kerneldir}/include/linux
 %{_kerneldir}/include/math-emu
 %{_kerneldir}/include/media
+%{_kerneldir}/include/misc
 %{_kerneldir}/include/mtd
 %{_kerneldir}/include/net
 %{_kerneldir}/include/pcmcia
@@ -957,13 +905,16 @@ exit 0
 %{_kerneldir}/include/rxrpc
 %{_kerneldir}/include/scsi
 %{_kerneldir}/include/sound
+%{_kerneldir}/include/target
 %{_kerneldir}/include/trace
 %{_kerneldir}/include/video
 %{_kerneldir}/include/xen
 %{_kerneldir}/init
 %{_kerneldir}/ipc
+%{_kerneldir}/Kconfig
 %{_kerneldir}/kernel
 %{_kerneldir}/lib
+%{_kerneldir}/localversion-%{ktag}
 %{_kerneldir}/mm
 %{_kerneldir}/net
 %{_kerneldir}/samples
@@ -972,6 +923,7 @@ exit 0
 %{_kerneldir}/sound
 %{_kerneldir}/tools
 %{_kerneldir}/usr
+%{_kerneldir}/virt
 %{_kerneldir}/virt/kvm
 %doc README.kernel-sources
 %doc README.MandrivaLinux
@@ -981,7 +933,7 @@ exit 0
 # kernel-devel
 #
 %if %build_devel
-%files -n %{kname}-devel-%{buildrel}
+%files -n %{kname}-devel
 %defattr(-,root,root)
 %dir %{_develdir}
 %dir %{_develdir}/arch
@@ -992,10 +944,6 @@ exit 0
 %{_develdir}/Makefile
 %{_develdir}/Module.symvers
 %{_develdir}/arch/Kconfig
-%ifarch sparc sparc64
-%{_develdir}/arch/sparc
-%{_develdir}/arch/sparc64
-%endif
 %ifarch %{ix86} x86_64
 %{_develdir}/arch/x86
 %endif
@@ -1016,6 +964,7 @@ exit 0
 %{_develdir}/include/linux
 %{_develdir}/include/math-emu
 %{_develdir}/include/media
+%{_develdir}/include/misc
 %{_develdir}/include/mtd
 %{_develdir}/include/net
 %{_develdir}/include/pcmcia
@@ -1023,11 +972,13 @@ exit 0
 %{_develdir}/include/rxrpc
 %{_develdir}/include/scsi
 %{_develdir}/include/sound
+%{_develdir}/include/target
 %{_develdir}/include/trace
 %{_develdir}/include/video
 %{_develdir}/include/xen
 %{_develdir}/init
 %{_develdir}/ipc
+%{_develdir}/Kconfig
 %{_develdir}/kernel
 %{_develdir}/lib
 %{_develdir}/mm
@@ -1038,7 +989,7 @@ exit 0
 %{_develdir}/sound
 %{_develdir}/tools
 %{_develdir}/usr
-%{_develdir}/virt/kvm
+%{_develdir}/virt
 %doc README.kernel-sources
 %doc README.MandrivaLinux
 %endif # kernel_devel
@@ -1047,7 +998,7 @@ exit 0
 # kernel-debug
 #
 %if %build_debug
-%files -n %{kname}-debug-%{buildrel} -f kernel_debug_files.up
+%files -n %{kname}-debuginfo -f kernel_debug_files.up
 %endif # build_debug
 
 
@@ -1055,7 +1006,7 @@ exit 0
 # kernel-doc
 #
 %if %build_doc
-%files -n %{kname}-doc-%{buildrel}
+%files -n %{kname}-doc
 %defattr(-,root,root)
 %doc linux-%{tar_ver}/Documentation/*
 %endif # kernel_doc
@@ -1063,39 +1014,39 @@ exit 0
 #
 # kernel-latest
 #
-%if %build_kernel
-%files -n %{kname}-latest
-%defattr(-,root,root)
-%endif # build_kernel
+#%if %build_kernel
+#%files -n %{kname}-latest
+#%defattr(-,root,root)
+#%endif # build_kernel
 
 #
 # kernel-source-latest
 #
-%if %build_source
-%files -n %{kname}-source-latest
-%defattr(-,root,root)
-%endif # build_source
+#%if %build_source
+#%files -n %{kname}-source-latest
+#%defattr(-,root,root)
+#%endif # build_source
 
 #
 # kernel-devel-latest
 #
-%if %build_devel
-%files -n %{kname}-devel-latest
-%defattr(-,root,root)
-%endif # build_devel
+#%if %build_devel
+#%files -n %{kname}-devel-latest
+#%defattr(-,root,root)
+#%endif # build_devel
 
 #
 # kernel-debug-latest
 #
-%if %build_debug
-%files -n %{kname}-debug-latest
-%defattr(-,root,root)
-%endif # build_debug
+#%if %build_debug
+#%files -n %{kname}-debuginfo-latest
+#%defattr(-,root,root)
+#%endif # build_debug
 
 #
 # kernel-doc-latest
 #
-%if %build_doc
-%files -n %{kname}-doc-latest
-%defattr(-,root,root)
-%endif # build_doc
+#%if %build_doc
+#%files -n %{kname}-doc-latest
+#%defattr(-,root,root)
+#%endif # build_doc
