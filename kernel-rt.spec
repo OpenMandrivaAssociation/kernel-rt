@@ -22,13 +22,13 @@
 
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
-%define kpatch		rc6
+%define kpatch		0
 %define kstable		0
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		9
+%define rt_rel		10
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -46,15 +46,15 @@
 
 # When we are using a pre/rc patch, the tarball is a patchlevel -1
 %if %kpatch
-%define kversion  	%{kernelversion}.%{patchlevel}
+%define kversion  	%{kernelversion}.%{patchlevel}.%{kstable}
 %define tar_ver	  	%{kernelversion}.%(expr %{patchlevel} - 1)
 %else
 %if %kstable
 %define kversion  	%{kernelversion}.%{patchlevel}.%{kstable}
 %define tar_ver   	%{kernelversion}.%{patchlevel}
 %else
-%define kversion  	%{kernelversion}.%{patchlevel}
-%define tar_ver   	%{kversion}
+%define kversion  	%{kernelversion}.%{patchlevel}.%{kstable}
+%define tar_ver   	%{kernelversion}.%{patchlevel}
 %endif
 %endif
 %define kverrel   	%{kversion}-%{rpmrel}
@@ -605,9 +605,9 @@ CreateFiles() {
 	echo "%{_bootdir}/System.map-${kernversion}" >> $output
 	echo "%dir %{_modulesdir}/${kernversion}/" >> $output
 	echo "%{_modulesdir}/${kernversion}/kernel" >> $output
-#	echo "%{_modulesdir}/${kernversion}/modules.*" >> $output
-#	echo "%doc README.kernel-sources" >> $output
-#	echo "%doc README.MandrivaLinux" >> $output
+	echo "%{_modulesdir}/${kernversion}/modules.*" >> $output
+	echo "%doc README.kernel-sources" >> $output
+	echo "%doc README.MandrivaLinux" >> $output
 	cat ../kernel_exclude_debug_files.$flavour >> $output
 }
 
@@ -752,21 +752,21 @@ done
 # sniff, if we gzipped all the modules, we change the stamp :(
 # we really need the depmod -ae here
 
-#pushd %{target_modules}
-#for i in *; do
-#	/sbin/depmod -u -ae -b %{buildroot} -r -F %{target_boot}/System.map-$i $i
-#	echo $?
-#done
+pushd %{target_modules}
+for i in *; do
+	/sbin/depmod -u -ae -b %{buildroot} -r -F %{target_boot}/System.map-$i $i
+	echo $?
+done
 
-#for i in *; do
-#	pushd $i
-#	echo "Creating module.description for $i"
-#	modules=`find . -name "*.ko.gz"`
-#	echo $modules | xargs /sbin/modinfo-25 \
-#	| perl -lne 'print "$name\t$1" if $name && /^description:\s*(.*)/; $name = $1 if m!^filename:\s*(.*)\.k?o!; $name =~ s!.*/!!' > modules.description
-#	popd
-#done
-#popd
+for i in *; do
+	pushd $i
+	echo "Creating module.description for $i"
+	modules=`find . -name "*.ko.gz"`
+	echo $modules | xargs /sbin/modinfo-25 \
+	| perl -lne 'print "$name\t$1" if $name && /^description:\s*(.*)/; $name = $1 if m!^filename:\s*(.*)\.k?o!; $name =~ s!.*/!!' > modules.description
+	popd
+done
+popd
 
 %if %build_source
 # make sure we are in the directory
@@ -914,7 +914,7 @@ exit 0
 %{_kerneldir}/Kconfig
 %{_kerneldir}/kernel
 %{_kerneldir}/lib
-%{_kerneldir}/localversion-%{ktag}
+#%{_kerneldir}/localversion-%{ktag}
 %{_kerneldir}/mm
 %{_kerneldir}/net
 %{_kerneldir}/samples
@@ -924,7 +924,7 @@ exit 0
 %{_kerneldir}/tools
 %{_kerneldir}/usr
 %{_kerneldir}/virt
-%{_kerneldir}/virt/kvm
+#%{_kerneldir}/virt/kvm
 %doc README.kernel-sources
 %doc README.MandrivaLinux
 %endif
@@ -935,6 +935,8 @@ exit 0
 %if %build_devel
 %files -n %{kname}-devel
 %defattr(-,root,root)
+%doc README.kernel-sources
+%doc README.MandrivaLinux
 %dir %{_develdir}
 %dir %{_develdir}/arch
 %dir %{_develdir}/include
@@ -990,8 +992,6 @@ exit 0
 %{_develdir}/tools
 %{_develdir}/usr
 %{_develdir}/virt
-%doc README.kernel-sources
-%doc README.MandrivaLinux
 %endif # kernel_devel
 
 #
