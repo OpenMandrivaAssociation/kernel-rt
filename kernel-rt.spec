@@ -48,12 +48,14 @@
 %if %kpatch
 %define kversion  	%{kernelversion}.%{patchlevel}.%{kstable}
 %define tar_ver	  	%{kernelversion}.%(expr %{patchlevel} - 1)
+%define rtversion	%{kernelversion}.%{patchlevel}-rc%{kpatch}-%{ktag}%{rt_rel}
 %else
-%if %kstable
 %define kversion  	%{kernelversion}.%{patchlevel}.%{kstable}
+%if %kstable
+%define rtversion	%{kversion}-%{ktag}%{rt_rel}
 %define tar_ver   	%{kernelversion}.%{patchlevel}
 %else
-%define kversion  	%{kernelversion}.%{patchlevel}.%{kstable}
+%define rtversion	%{kernelversion}.%{patchlevel}-%{ktag}%{rt_rel}
 %define tar_ver   	%{kernelversion}.%{patchlevel}
 %endif
 %endif
@@ -166,11 +168,11 @@ Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchl
 
 # Mingos patches
 %if %kpatch
-Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.patch.xz
-Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{kpatch}-%{ktag}%{rt_rel}.patch.sign
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{rtersion}.patch.xz
+Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{rtversion}.patch.sign
 %else
-Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{ktag}%{rt_rel}.patch.xz
-Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{kversion}-%{ktag}%{rt_rel}.patch.sign
+Patch2:		http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{rtversion}.patch.xz
+Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{patchlevel}/patch-%{rtversion}.patch.sign
 %endif
 
 # LKML's patches
@@ -457,7 +459,7 @@ popd
 #LC_ALL=C perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{sublevel}/" linux-%{tar_ver}/Makefile
 
 # remove localversion-tip file
-rm -f linux-%{tar_ver}/localversion-tip
+rm -f linux-%{tar_ver}/localversion-rt
 
 %build
 # Common target directories
