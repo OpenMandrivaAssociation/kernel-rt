@@ -315,104 +315,6 @@ kernel modules at load time.
 %{rt_info}
 %endif # build_doc
 
-
-#
-# kernel-latest: virtual rpm
-#
-#%if %build_kernel
-#%package -n %{kname}-latest
-#Version:        %{kversion}
-#Release:        %{rpmrel}
-#Summary: 	Virtual rpm for latest %{kname}
-#Group: 	  	Development/Kernel
-#Requires: 	%{kname} >= %{EVRD}
-#Obsoletes:	%{kname}-smp-latest
-#
-#%description -n %{kname}-latest
-#This package is a virtual rpm that aims to make sure you always have the
-#latest %{kname} installed...
-#
-#%{rt_info}
-#%endif # build_kernel
-
-
-#
-# kernel-source-latest: virtual rpm
-#
-#%if %build_source
-#%package -n %{kname}-source-latest
-#Version:        %{kversion}
-#Release:        %{rpmrel}
-#Summary: 	Virtual rpm for latest %{kname}-source
-#Group: 	  	Development/Kernel
-#Requires: 	%{kname}-source
-#
-#%description -n %{kname}-source-latest
-#This package is a virtual rpm that aims to make sure you always have the
-#latest %{kname}-source installed...
-#
-#%{rt_info}
-#%endif # build_source
-
-
-#
-# kernel-devel-latest: virtual rpm
-#
-#%if %build_devel
-#%package -n %{kname}-devel-latest
-#Version:        %{kversion}
-#Release:        %{rpmrel}
-#Summary: 	Virtual rpm for latest %{kname}-devel
-#Group: 	  	Development/Kernel
-#Requires: 	%{kname}-devel
-#Obsoletes:	%{kname}-headers-latest
-#Obsoletes:	%{kname}-smp-devel-latest
-#Obsoletes:	%{kname}-smp-headers-latest
-#
-#%description -n %{kname}-devel-latest
-#This package is a virtual rpm that aims to make sure you always have the
-#latest %{kname}-devel installed...
-#
-#%{rt_info}
-#%endif # build_devel
-
-
-#
-# kernel-debug-latest: virtual rpm
-#
-#%if %build_debug
-#%package -n %{kname}-debuginfo-latest
-#Version:        %{kversion}
-#Release:        %{rpmrel}
-#Summary: 	Virtual rpm for latest %{kname}-debuginfo
-#Group: 	  	Development/Debug
-#Requires: 	%{kname}-debuginfo
-#
-#%description -n %{kname}-debuginfo-latest
-#This package is a virtual rpm that aims to make sure you always have the
-#latest %{kname}-debuginfo installed...
-#
-#%{rt_info}
-#%endif # build_debug
-
-#
-# kernel-doc-latest: virtual rpm
-#
-#%if %build_doc
-#%package -n %{kname}-doc-latest
-#Version:        %{kversion}
-#Release:        %{rpmrel}
-#Summary: 	Virtual rpm for latest %{kname}-doc
-#Group: 	  	Books/Computer books
-#Requires: 	%{kname}-doc
-#
-#%description -n %{kname}-doc-latest
-#This package is a virtual rpm that aims to make sure you always have the
-#latest %{kname}-doc installed...
-#
-#%{rt_info}
-#%endif
-
 #
 # End packages - here begins build stage
 #
@@ -742,7 +644,7 @@ patch -p1 -d %{target_devel} -i %{SOURCE2}
 %endif # build_source
 
 # gzipping modules
-#find %{target_modules} -name "*.ko" | xargs gzip -9
+find %{target_modules} -name "*.ko" | xargs gzip -9
 
 # We used to have a copy of PrepareKernel here
 # Now, we make sure that the thing in the linux dir is what we want it to be
@@ -916,7 +818,6 @@ exit 0
 %{_kerneldir}/Kconfig
 %{_kerneldir}/kernel
 %{_kerneldir}/lib
-#%{_kerneldir}/localversion-%{ktag}
 %{_kerneldir}/mm
 %{_kerneldir}/net
 %{_kerneldir}/samples
@@ -926,7 +827,6 @@ exit 0
 %{_kerneldir}/tools
 %{_kerneldir}/usr
 %{_kerneldir}/virt
-#%{_kerneldir}/virt/kvm
 %doc README.kernel-sources
 %doc README.MandrivaLinux
 %endif
@@ -1012,43 +912,3 @@ exit 0
 %defattr(-,root,root)
 %doc linux-%{tar_ver}/Documentation/*
 %endif # kernel_doc
-
-#
-# kernel-latest
-#
-#%if %build_kernel
-#%files -n %{kname}-latest
-#%defattr(-,root,root)
-#%endif # build_kernel
-
-#
-# kernel-source-latest
-#
-#%if %build_source
-#%files -n %{kname}-source-latest
-#%defattr(-,root,root)
-#%endif # build_source
-
-#
-# kernel-devel-latest
-#
-#%if %build_devel
-#%files -n %{kname}-devel-latest
-#%defattr(-,root,root)
-#%endif # build_devel
-
-#
-# kernel-debug-latest
-#
-#%if %build_debug
-#%files -n %{kname}-debuginfo-latest
-#%defattr(-,root,root)
-#%endif # build_debug
-
-#
-# kernel-doc-latest
-#
-#%if %build_doc
-#%files -n %{kname}-doc-latest
-#%defattr(-,root,root)
-#%endif # build_doc
