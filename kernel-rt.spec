@@ -118,8 +118,17 @@ kernels.
 %define target_cpu	%(echo %{_target_cpu} | sed -e "s/amd64/x86_64/")
 %define target_arch	%(echo %{_arch} | sed -e "s/amd64/x86_64/" -e "s/i386/x86/" -e "s/x86_64/x86/")
 
+
+# Defines for the things that are needed for all the kernels
+%define requires1 module-init-tools >= 3.0-%mkrel 7
+%define requires2 mkinitrd >= 3.4.43-%mkrel 10
+%define requires3 bootloader-utils >= 1.9
+%define requires4 sysfsutils module-init-tools >= 0.9.15
+%define requires5 kernel-firmware >= 2.6.27-0.rc2.2mdv
+
+%define kprovides kernel = %{tar_ver}, alsa
+
 # src.rpm description
-Summary: 	The Linux kernel (the core of the Linux operating system)
 Name:           %{kname}
 Version:        %{kversion}
 Release:        %{rpmrel}
@@ -127,6 +136,13 @@ License: 	GPLv2
 Group: 		Development/Kernel
 ExclusiveArch: 	%{ix86} x86_64
 URL: 		http://www.kernel.org/
+Summary:  The Linux Kernel
+Provides: %kprovides
+Requires: %requires1
+Requires: %requires2
+Requires: %requires3
+Requires: %requires4
+Requires: %requires5
 
 ####################################################################
 #
@@ -185,14 +201,6 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{
 #END
 ####################################################################
 
-# Defines for the things that are needed for all the kernels
-%define requires1 module-init-tools >= 3.0-%mkrel 7
-%define requires2 mkinitrd >= 3.4.43-%mkrel 10
-%define requires3 bootloader-utils >= 1.9
-%define requires4 sysfsutils module-init-tools >= 0.9.15
-%define requires5 kernel-firmware >= 2.6.27-0.rc2.2mdv
-
-%define kprovides kernel = %{tar_ver}, alsa
 
 Conflicts: drakxtools-backend < 10.4.140
 BuildRoot: 	%{_tmppath}/%{name}-%{kversion}-build-%{_arch}
@@ -209,18 +217,6 @@ Source package to build the Linux kernel.
 # kernel: Symmetric MultiProcessing kernel
 #
 %if %build_kernel
-%package -n %{kname}
-Summary:  The Linux Kernel compiled for SMP machines
-Version:  %{kversion}
-Release:  %{rpmrel}
-Group: 	  Development/Kernel
-Provides: %kprovides
-Requires: %requires1
-Requires: %requires2
-Requires: %requires3
-Requires: %requires4
-Requires: %requires5
-
 %description -n %{kname}
 %{rt_info}
 %endif # build_kernel
