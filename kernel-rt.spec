@@ -208,18 +208,8 @@ Autoreqprov: 	no
 BuildRequires: 	gcc module-init-tools >= 0.9.15
 
 %description
-Source package to build the Linux kernel.
-
 %{rt_info}
 
-
-#
-# kernel: Symmetric MultiProcessing kernel
-#
-%if %build_kernel
-%description -n %{kname}
-%{rt_info}
-%endif # build_kernel
 
 #
 # kernel-source: kernel sources
