@@ -123,7 +123,7 @@ kernels.
 %define requires1 module-init-tools >= 3.0-%mkrel 7
 %define requires2 mkinitrd >= 3.4.43-%mkrel 10
 %define requires3 bootloader-utils >= 1.9
-%define requires4 sysfsutils module-init-tools >= 0.9.15
+%define requires4 sysfsutils
 %define requires5 kernel-firmware >= 2.6.27-0.rc2.2mdv
 
 %define kprovides kernel = %{tar_ver}, alsa
@@ -203,7 +203,6 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{
 
 
 Conflicts: drakxtools-backend < 10.4.140
-BuildRoot: 	%{_tmppath}/%{name}-%{kversion}-build-%{_arch}
 Autoreqprov: 	no
 BuildRequires: 	gcc module-init-tools >= 0.9.15
 
@@ -218,8 +217,7 @@ BuildRequires: 	gcc module-init-tools >= 0.9.15
 %package -n %{kname}-source
 Version:  %{kversion}
 Release:  %{rpmrel}
-Provides: %{kname}-source, kernel-source = %{kverrel}, kernel-devel = %{kverrel}
-Provides: %{kname}-source-%{kernelversion}.%{patchlevel}
+Provides: kernel-source = %{kverrel}, kernel-devel = %{kverrel}
 Requires: glibc-devel, ncurses-devel, make, gcc, perl
 Summary:  The source code for the Linux kernel
 Group:    Development/Kernel
@@ -336,12 +334,14 @@ popd
 # Setup Begin
 #
 
-pushd %{_sourcedir}
-
-#
 # Copy our defconfigs into place.
-cp -f %{_arch}.config     %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
-popd
+%if %{_arch} == i386
+cp %{SOURCE20} %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
+%else
+%if %{_arch} == x86_64
+cp %{SOURCE21} %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
+%endif
+%endif
 
 # make sure the kernel has the sublevel we know it has...
 #LC_ALL=C perl -p -i -e "s/^SUBLEVEL.*/SUBLEVEL = %{sublevel}/" linux-%{tar_ver}/Makefile
