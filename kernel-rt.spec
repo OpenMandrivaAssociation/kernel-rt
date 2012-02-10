@@ -23,12 +23,12 @@
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		0
+%define kstable		5
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		10
+%define rt_rel		12
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -377,11 +377,11 @@ PrepareKernel() {
 	fi
 
 	# make sure EXTRAVERSION says what we want it to say
-	%if %kstable
-		LC_ALL=C perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = .%{kstable}-$extension/" Makefile
-	%else
+#	%%if %kstable
+#		LC_ALL=C perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = .%{kstable}-$extension/" Makefile
+#	%%else
 		LC_ALL=C perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = -$extension/" Makefile
-	%endif
+#	%%endif
 	
 	### FIXME MDV bugs #29744, #29074, will be removed when fixed upstream
 	LC_ALL=C perl -p -i -e "s/^source/### source/" drivers/crypto/Kconfig
