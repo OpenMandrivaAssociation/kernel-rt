@@ -39,9 +39,9 @@
 
 %define rpmtag		%distsuffix
 %if %kpatch
-%define rpmrel		%mkrel 0.%{kpatch}.%{ktag}%{rt_rel}.%{mdvrelease}
+%define rpmrel		0.%{kpatch}.%{ktag}%{rt_rel}.%{mdvrelease}
 %else
-%define rpmrel		%mkrel 1.%{ktag}%{rt_rel}.%{mdvrelease}
+%define rpmrel		1.%{ktag}%{rt_rel}.%{mdvrelease}
 %endif
 
 # When we are using a pre/rc patch, the tarball is a patchlevel -1
@@ -121,8 +121,8 @@ kernels.
 
 
 # Defines for the things that are needed for all the kernels
-%define requires1 module-init-tools >= 3.0-%mkrel 7
-%define requires2 mkinitrd >= 3.4.43-%mkrel 10
+%define requires1 module-init-tools >= 3.0-7
+%define requires2 mkinitrd >= 3.4.43-10
 %define requires3 bootloader-utils >= 1.9
 %define requires4 sysfsutils
 %define requires5 kernel-firmware >= 2.6.27-0.rc2.2mdv
