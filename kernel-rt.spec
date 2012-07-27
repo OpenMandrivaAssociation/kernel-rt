@@ -23,12 +23,12 @@
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		22
+%define kstable		23
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		34
+%define rt_rel		37
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -206,6 +206,7 @@ Source11:	http://www.kernel.org/pub/linux/kernel/projects/rt/%{kernelversion}.%{
 Conflicts: drakxtools-backend < 10.4.140
 Autoreqprov: 	no
 BuildRequires: 	gcc module-init-tools >= 0.9.15
+Obsoletes: %{kname}-latest < %{EVRD}
 
 %description
 %{rt_info}
@@ -223,6 +224,7 @@ Requires: glibc-devel, ncurses-devel, make, gcc, perl
 Summary:  The source code for the Linux kernel
 Group:    Development/Kernel
 Autoreqprov: no
+Obsoletes: %{kname}-source-latest < %{EVRD}
 
 %description -n %{kname}-source
 The %{kname}-source package contains the source code files for the Linux 
@@ -248,6 +250,7 @@ Summary:  The %{kname} devel files for 3rdparty modules build
 Group:    Development/Kernel
 Autoreqprov: no
 Requires: glibc-devel, ncurses-devel, make, gcc, perl
+Obsoletes: %{kname}-devel-latest < %{EVRD}
 
 %description -n %{kname}-devel
 This package contains the kernel-devel files that should be enough to build 
