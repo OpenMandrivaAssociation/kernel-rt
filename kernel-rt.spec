@@ -160,6 +160,8 @@ Source2:	disable-mrproper-in-devel-rpms.patch
 Source4:  README.kernel-sources
 Source5:  README.MandrivaLinux
 
+Source6:  %{name}.rpmlintrc
+
 Source20: i386.config
 Source21: x86_64.config
 
@@ -352,6 +354,8 @@ cp %{SOURCE21} %{build_dir}/linux-%{tar_ver}/arch/%{target_arch}/defconfig
 
 # remove localversion-tip file
 rm -f linux-%{tar_ver}/localversion-rt
+
+sed -i '/^LD/s/ld$/ld.bfd/' %{build_dir}/linux-%{tar_ver}/Makefile
 
 %build
 # Common target directories
@@ -599,9 +603,7 @@ for i in alpha arm arm26 avr32 blackfin cris frv h8300 hexagon ia64 mips microbl
 %if %build_kernel
 	rm -rf %{target_devel}/arch/$i
 	rm -rf %{target_devel}/include/asm-$i
-%endif # build_kernel
 # Needed for truecrypt build (Danny)
-%if %build_kernel
 	cp -fR drivers/md/dm.h %{target_devel}/drivers/md/
 %endif # build_kernel
 %endif # build_devel
