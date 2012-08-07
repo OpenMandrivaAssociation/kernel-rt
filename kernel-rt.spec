@@ -23,12 +23,12 @@
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		23
+%define kstable		26
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		37
+%define rt_rel		39
 
 # this is the releaseversion
 %define mdvrelease 	1
