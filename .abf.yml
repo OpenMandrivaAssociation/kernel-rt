@@ -1,9 +1,5 @@
+---
 sources:
-  "disable-mrproper-in-devel-rpms.patch:"	4ffec96b5553375fd2305812f135c217fa8600f9
-  "i386.config:"	b49b20c728a8c699d0e857c6aaf8dea280baed4e
-  "kernel-rt.rpmlintrc:"	af57fe580c7626e117591bb046a944b2d8592679
-  "linux-3.2.tar.sign:"	62109fca127901f8bd7d2d786b33db96fd1281d9
-  "linux-3.2.tar.xz:"	0d6ae32001e3c2ecd996675c4262a9ae977733c5
-  "README.kernel-sources:"	770cb416b23a015569410d815c1737e59eec8a6f
-  "README.MandrivaLinux:"	d9fd584b29249abcfc126c8c1c857556ed8fef38
-  "x86_64.config:"	3228e02a1ff80ca2984879b392c708150c69980d
+  linux-3.2.tar.xz: 0d6ae32001e3c2ecd996675c4262a9ae977733c5
+  patch-3.2.34-rt51.patch.xz: d24746096897597478fac6e5f61390be9841855d
+  patch-3.2.34.xz: 4008da64debb407c40502b1a7979e04553a8bd1a

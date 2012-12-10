@@ -1,0 +1,30 @@
+         Mandriva Kernel Compile Special Instructions
+
+
+
+Due to the way that Mandriva generates multiple versions of the kernel
+(uniprocessor, smp, enterprise, boot, secure), recompiling the kernel
+from the kernel source installed in /usr/src/linux *MUST* be preceded 
+by one step:
+
+    make mrproper
+
+This is roughly equivalent to "make distclean", but not quite.  The
+best explanation of why this scenario exists appeared in the Cooker
+Mailing List by Andrey Borzenkov:
+
+    PLEASE do not forget - you must not need to configure your kernel 
+    before you compile EXTERNAL module (as example, nVidia). PLEASE 
+    remember that Mandriva has 5 (five!) kernel flavours and you can 
+    compile external modules for any of them WITHOUT RECONFIGURATION 
+    IN BETWEEN. PLEASE look into this "regenrated files" in clean 
+    kernel-source and after you have reconfigured your kernel.
+
+To summarize, the kernel source tree is left in a state such that you 
+compile custom kernel modules for any of the five versions of the
+kernel without having to do anything special.  One of the side effects
+of this is that if you want to start a compile from scratch, you must
+remove various configuration files (as well as object files and 
+binaries).  To do this, you *MUST* do the "make mrproper" first.
+
+Regards, the Mandriva Team

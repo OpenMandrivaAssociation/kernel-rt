@@ -23,12 +23,12 @@
 # kernel Makefile extraversion is substituted by 
 # kpatch/kstable wich are either 0 (empty), rc (kpatch) or stable release (kstable)
 %define kpatch		0
-%define kstable		29
+%define kstable		34
 
 %define ktag		rt
 
 # AKPM's release
-%define rt_rel		44
+%define rt_rel		51
 
 # this is the releaseversion
 %define mdvrelease 	1
@@ -150,8 +150,8 @@ Requires: %requires5
 # Sources
 #
 ### This is for full SRC RPM
-Source0:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.xz
-Source1:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/linux-%{tar_ver}.tar.sign
+Source0:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.x/linux-%{tar_ver}.tar.xz
+Source1:        ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.x/linux-%{tar_ver}.tar.sign
 # This is for disabling mrproper on -devel rpms
 Source2:	disable-mrproper-in-devel-rpms.patch
 # This disables removal of bounds.h and asm-offsets.h in -devel rpms (from kernel-linus)
@@ -177,12 +177,12 @@ Source21: x86_64.config
 # Pre linus patch: ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing
 
 %if %kpatch
-Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing/patch-%{kernelversion}.%{patchlevel}-%{kpatch}.xz
-Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/testing/patch-%{kernelversion}.%{patchlevel}-%{kpatch}.sign
+Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.x/testing/patch-%{kernelversion}.%{patchlevel}-%{kpatch}.xz
+Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.x/testing/patch-%{kernelversion}.%{patchlevel}-%{kpatch}.sign
 %endif
 %if %kstable
-Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/patch-%{kversion}.xz
-Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.%{patchlevel}/patch-%{kversion}.sign
+Patch1:         ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.x/patch-%{kversion}.xz
+Source10:       ftp://ftp.kernel.org/pub/linux/kernel/v%{kernelversion}.x/patch-%{kversion}.sign
 %endif
 
 # Mingos patches
@@ -904,3 +904,554 @@ exit 0
 %defattr(-,root,root)
 %doc linux-%{tar_ver}/Documentation/*
 %endif # kernel_doc
+
+
+%changelog
+* Wed Sep 05 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.28-1.rt42.1
++ Revision: 816391
+- update to 3.2.28-rt42
+
+* Tue Aug 07 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.26-1.rt39.1
++ Revision: 811939
+- 3.2.26-rt39 release
+- use ld.bfd for linking because ld.gold fails on i386
+- add rpmlintrc
+- update to 3.2.23-rt37
+- obsolete kernel-rt*-latest packages
+
+* Wed Jul 11 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.22-1.rt34.1
++ Revision: 808874
+- update to 3.2.22-rt34
+
+* Wed Jun 27 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.21-1.rt33.1
++ Revision: 807190
+- update to 3.2.21-rt33
+
+* Wed May 30 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.18-1.rt29.1
++ Revision: 801227
+- update to 3.2.18-rt29
+
+* Mon May 21 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.17-1.rt28.1
++ Revision: 799758
+- update to 3.2.17-rt28
+
+* Tue Apr 24 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.16-1.rt27.1
++ Revision: 793113
+- update to 3.2.16-rt27
+
+* Fri Apr 20 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.15-1.rt26.1
++ Revision: 792452
+- update to 3.2.15-rt26
+
+* Tue Apr 10 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.14-1.rt24.1
++ Revision: 790245
+- update to 3.2.14-rt24
+
+* Wed Apr 04 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.13-1.rt23.1
++ Revision: 789115
+- update to 3.2.13-rt23
+- remove %%mkrel macro
+
+* Thu Mar 29 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.12-1.rt22.1
++ Revision: 788128
+- update to 3.2.12-rt22
+
+* Wed Mar 14 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.11-1.rt20.1
++ Revision: 784933
+- update to 3.2.11-rt20
+
+* Tue Mar 13 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.10-1.rt18.1
++ Revision: 784690
+- update to 3.2.10-rt18
+
+* Mon Mar 05 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.9-1.rt15.1
++ Revision: 782141
+- new version 3.2.9-rt15
+
+* Fri Mar 02 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.9-1.rt14.1
++ Revision: 781790
+- new version 3.2.9-rt14
+
+* Fri Feb 17 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.6-1.rt13.1
++ Revision: 776098
+- new version 3.2.6-rt13
+
+* Fri Feb 10 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.5-1.rt12.1
++ Revision: 772417
+- update to 3.2.5-rt12
+
+* Mon Jan 23 2012 Dmitry Mikhirev <dmikhirev@mandriva.org> 3.2.0-1.rt10.1
++ Revision: 766790
+- specfile cleanup
+- re-enable modules gzipping
+- add new tarballs
+- fix errors related to depmod
+- new version 3.2-rt10
+- various fixes in spec file
+- update source files
+- New version 3.2-rc6-rt9
+  *-latest packages dropped
+  fake version and release numbers removed
+
+  + trem <trem@mandriva.org>
+    - update to 2.6.33.7-rt29
+
+* Wed Jul 14 2010 trem <trem@mandriva.org> 2.6.33.6-1.rt26.1mdv2011.0
++ Revision: 553407
+- update to 2.6.33.6-rt26
+
+* Wed Jun 09 2010 trem <trem@mandriva.org> 2.6.33.5-1.rt23.1mdv2010.1
++ Revision: 547802
+- update to 2.6.33.5-rt23
+- add patch video-fb-fix-unregister_framebuffer-fb_destroy.patch from "officiel" kernel
+- disable CONFIG_CC_OPTIMIZE_FOR_SIZE and CONFIG_VGACON_SOFT_SCROLLBACK
+- update to 2.6.33.5-rt22
+
+* Wed May 19 2010 trem <trem@mandriva.org> 2.6.33.4-1.rt20.1mdv2010.1
++ Revision: 545454
+- update to 2.6.33.4-rt20
+
+* Sun May 02 2010 trem <trem@mandriva.org> 2.6.33.3-1.rt19.1mdv2010.1
++ Revision: 541693
+- update to 2.6.33.3-rt19
+
+* Sat May 01 2010 trem <trem@mandriva.org> 2.6.33.3-1.rt17.2mdv2010.1
++ Revision: 541394
+- include agp in the kernel (it avoid dependancy problem when building the initrd)
+
+* Fri Apr 30 2010 trem <trem@mandriva.org> 2.6.33.3-1.rt17.1mdv2010.1
++ Revision: 541376
+- update to 2.6.33.3-rt17
+- remove fix_namei.patch and fix_fs_ecryptfs_inode_c.patch (added upstream)
+
+* Thu Apr 29 2010 trem <trem@mandriva.org> 2.6.33.3-1.rt16.2mdv2010.1
++ Revision: 541046
+- add 2 patches for the nouveau driver (thanks tmb for the information)
+
+* Thu Apr 29 2010 trem <trem@mandriva.org> 2.6.33.3-1.rt16.1mdv2010.1
++ Revision: 540680
+- add 2 simple patch to fix the compilation
+- enable nouveau
+- update to 2.6.33.3-rt16
+
+* Sat Apr 10 2010 trem <trem@mandriva.org> 2.6.33.2-1.rt13.1mdv2010.1
++ Revision: 533547
+- update to 2.6.33.2-rt13
+
+* Wed Mar 24 2010 trem <trem@mandriva.org> 2.6.33.1-1.rt11.1mdv2010.1
++ Revision: 526983
+- update to 2.6.33.1-rt11
+
+* Thu Mar 18 2010 trem <trem@mandriva.org> 2.6.33.1-1.rt10.1mdv2010.1
++ Revision: 524745
+- update to 2.6.33.1-rt10
+- remove patch wtf.diff (added upstream)
+- update to 2.6.33.1-rt9
+- add patch wtf.diff that fix compilation for i915
+
+* Fri Mar 12 2010 trem <trem@mandriva.org> 2.6.33-1.rt7.1mdv2010.1
++ Revision: 518569
+- update to 2.6.33-rt7
+
+* Mon Mar 01 2010 trem <trem@mandriva.org> 2.6.33-1.rt4.1mdv2010.1
++ Revision: 513032
+- update to 2.6.33-rt4
+
+* Sun Feb 28 2010 trem <trem@mandriva.org> 2.6.33-1.rt3.1mdv2010.1
++ Revision: 512807
+- update to 2.6.33-rt3
+
+* Thu Feb 18 2010 trem <trem@mandriva.org> 2.6.31.12-1.rt21.1mdv2010.1
++ Revision: 507925
+- update to 2.6.31.12-rt21
+
+* Thu Feb 11 2010 trem <trem@mandriva.org> 2.6.31.12-1.rt20.2mdv2010.1
++ Revision: 504344
+- set RTC_HCTOSYS
+
+* Sat Jan 23 2010 trem <trem@mandriva.org> 2.6.31.12-1.rt20.1mdv2010.1
++ Revision: 495303
+- update to 2.6.31.12-rt20
+
+* Wed Nov 11 2009 trem <trem@mandriva.org> 2.6.31.6-1.rt19.1mdv2010.1
++ Revision: 464395
+- update to 2.6.31.6-rt19
+
+* Sat Nov 07 2009 trem <trem@mandriva.org> 2.6.31.5-1.rt18.1mdv2010.1
++ Revision: 462396
+- update to 2.6.31.5-rt18
+
+* Wed Oct 14 2009 trem <trem@mandriva.org> 2.6.31.4-1.rt14.1mdv2010.0
++ Revision: 457307
+- update to 2.6.31.4-rt14
+
+* Tue Oct 06 2009 trem <trem@mandriva.org> 2.6.31.2-1.rt13.1mdv2010.0
++ Revision: 454703
+- update to 2.6.31.2-rt13
+
+* Sun Sep 20 2009 trem <trem@mandriva.org> 2.6.31-1.rt11.1mdv2010.0
++ Revision: 444794
+- update to 2.6.31-rt11
+
+* Tue Sep 15 2009 trem <trem@mandriva.org> 2.6.31-1.rt10.1mdv2010.0
++ Revision: 443297
+- update to 2.6.31-rt10
+
+* Fri Sep 11 2009 trem <trem@mandriva.org> 2.6.31-0.rc9.rt9.1.1mdv2010.0
++ Revision: 438525
+- update to 2.6.31-rc9-rt9.1
+
+* Mon Aug 31 2009 trem <trem@mandriva.org> 2.6.31-0.rc8.rt9.2mdv2010.0
++ Revision: 423112
+- remove CONFIG_SYSFS?\195?\168DEPRECATED
+
+* Sat Aug 29 2009 trem <trem@mandriva.org> 2.6.31-0.rc8.rt9.1mdv2010.0
++ Revision: 422067
+- update to 2.6.31-rc8-rt9
+
+* Wed Aug 26 2009 trem <trem@mandriva.org> 2.6.31-0.rc7.rt8.1mdv2010.0
++ Revision: 421579
+- update to 2.6.31-rc7-rt8
+
+* Tue Aug 25 2009 trem <trem@mandriva.org> 2.6.31-0.rc7.rt7.1mdv2010.0
++ Revision: 421291
+- update to 2.6.31-rc7-rt7
+
+* Sun Aug 23 2009 trem <trem@mandriva.org> 2.6.31-0.rc6.rt6.1mdv2010.0
++ Revision: 419740
+- update to 2.6.31-rc6-rt6
+
+* Thu Aug 20 2009 trem <trem@mandriva.org> 2.6.31-0.rc6.rt5.2mdv2010.0
++ Revision: 418595
+- update disable-mrproper-in-devel-rpms.patch
+- add kbuild-really-dont-remove-bounds-asm-offsets-headers.patch (from kernel-linus)
+- update to 2.6.31-rc6-rt5
+
+* Wed Aug 19 2009 trem <trem@mandriva.org> 2.6.31-0.rc6.rt4.1mdv2010.0
++ Revision: 417893
+- update to 2.6.31-rc6-rt4
+
+* Mon Aug 17 2009 trem <trem@mandriva.org> 2.6.31-0.rc6.rt2.1mdv2010.0
++ Revision: 417177
+- update to 2.6.31-rc6-rt2
+
+* Thu Aug 13 2009 trem <trem@mandriva.org> 2.6.31-0.rc5.rt1.2.1mdv2010.0
++ Revision: 415793
+- update to unofficial 2.6.31.rc5-rt1.2
+
+* Thu Aug 06 2009 trem <trem@mandriva.org> 2.6.31-0.rc5.rt1.1.2mdv2010.0
++ Revision: 410986
+- update to non-official 2.6.31-rc5-rt1.1
+
+* Thu Aug 06 2009 trem <trem@mandriva.org> 2.6.31-0.rc4.rt1.2mdv2010.0
++ Revision: 410410
+- add "arch/x86/include" in -devel
+
+* Tue Aug 04 2009 trem <trem@mandriva.org> 2.6.31-0.rc4.rt1.1mdv2010.0
++ Revision: 408626
+- update to 2.6.31-rc4-rt1
+
+* Fri Jul 10 2009 trem <trem@mandriva.org> 2.6.29.6-1.rt23.1mdv2010.0
++ Revision: 394212
+- update to 2.6.29.6-rt23
+
+* Tue Jun 23 2009 trem <trem@mandriva.org> 2.6.29.5-1.rt22.1mdv2010.0
++ Revision: 388723
+- update to 2.6.29.5-rt22
+
+* Wed Jun 17 2009 trem <trem@mandriva.org> 2.6.29.5-1.rt21.1mdv2010.0
++ Revision: 386757
+- update to 2.6.29.5-rt21
+
+* Mon Jun 15 2009 trem <trem@mandriva.org> 2.6.29.4-1.rt19.1mdv2010.0
++ Revision: 386169
+- update to 2.6.29.4-rt19
+- remove patch smi-detector.patch (added upstream)
+
+* Thu Jun 04 2009 trem <trem@mandriva.org> 2.6.29.4-1.rt16.2mdv2010.0
++ Revision: 382892
+- add smi detector patch
+
+* Mon May 25 2009 trem <trem@mandriva.org> 2.6.29.4-1.rt16.1mdv2010.0
++ Revision: 379659
+- update to 2.6.29.4-rt16
+- update to 2.6.29.4-rt15
+
+* Tue May 19 2009 trem <trem@mandriva.org> 2.6.29.3-1.rt14.1mdv2010.0
++ Revision: 377788
+- update to 2.6.29.3-rt14
+
+* Fri May 15 2009 trem <trem@mandriva.org> 2.6.29.3-1.rt13.2mdv2010.0
++ Revision: 376281
+- set HZ to 1000 (instead of 250)
+
+* Wed May 13 2009 trem <trem@mandriva.org> 2.6.29.3-1.rt13.1mdv2010.0
++ Revision: 375585
+- update to 2.6.29.3-rt13
+
+* Sun May 03 2009 trem <trem@mandriva.org> 2.6.29.2-1.rt11.1mdv2010.0
++ Revision: 370818
+- update to 2.6.29.2-rt11
+
+* Wed Apr 29 2009 trem <trem@mandriva.org> 2.6.29.2-1.rt10.1mdv2010.0
++ Revision: 369146
+- update to 2.6.29.2-rt10
+- update to 2.6.29.1-rt9
+- fix Group :
+ Development/Debug for debug and debug-latest
+ Books/Computer books for doc and doc-latest
+ Development/Kernel for all others
+
+* Sat Apr 18 2009 trem <trem@mandriva.org> 2.6.29.1-1.rt8.1mdv2009.1
++ Revision: 367982
+- update to 2.6.29.1-rt8
+
+* Fri Apr 03 2009 trem <trem@mandriva.org> 2.6.29.1-1.rt4.1mdv2009.1
++ Revision: 363889
+- update to 2.6.29.1-rt4
+- update to 2.6.29-rt3
+
+* Sun Mar 29 2009 trem <trem@mandriva.org> 2.6.29-1.rt1.1mdv2009.1
++ Revision: 362119
+- update to 2.6.29-rt1
+- update to 2.6.29-rc7-rt1
+
+* Wed Feb 25 2009 trem <trem@mandriva.org> 2.6.29-0.rc6.rt3.1mdv2009.1
++ Revision: 344617
+- update to 2.6.29-rc6-rt3
+
+* Sun Feb 15 2009 trem <trem@mandriva.org> 2.6.26.8-1.rt16.1mdv2009.1
++ Revision: 340495
+- update to 2.6.26.8-rt16
+
+* Sat Jan 31 2009 trem <trem@mandriva.org> 2.6.26.8-1.rt15.1mdv2009.1
++ Revision: 335803
+- update to 2.6.26.8-rt15
+
+* Wed Jan 14 2009 trem <trem@mandriva.org> 2.6.26.8-1.rt13.2mdv2009.1
++ Revision: 329618
+- use smp config (and not up config)
+- remove smp kernel, only use one kernel-rt for both up and smp
+
+* Sat Jan 10 2009 trem <trem@mandriva.org> 2.6.26.8-1.rt13.1mdv2009.1
++ Revision: 327991
+- update 2.6.26.8-rt13
+
+* Mon Dec 22 2008 trem <trem@mandriva.org> 2.6.26.8-1.rt12.1mdv2009.1
++ Revision: 317715
+- update to 2.6.26.8-rt12
+
+* Sun Nov 02 2008 trem <trem@mandriva.org> 2.6.26.6-1.rt11.2mdv2009.1
++ Revision: 299193
+- add debug info on module (same way as the mdv kernel)
+
+* Tue Oct 14 2008 trem <trem@mandriva.org> 2.6.26.6-1.rt11.1mdv2009.1
++ Revision: 293770
+- update to 2.6.26.6-rt11
+- update to 2.6.26.6-rt10
+
+* Thu Sep 11 2008 trem <trem@mandriva.org> 2.6.26.5-1.rt9.1mdv2009.0
++ Revision: 283938
+- update to 2.6.26.5-rt9
+
+* Wed Sep 10 2008 trem <trem@mandriva.org> 2.6.26.5-1.rt8.1mdv2009.0
++ Revision: 283604
+- update to 2.6.26.5-rt8
+
+* Mon Sep 08 2008 trem <trem@mandriva.org> 2.6.26.3-1.rt7.3mdv2009.0
++ Revision: 282794
+- add kernel-firmware as require for kernel-rt-smp too
+
+* Mon Sep 08 2008 trem <trem@mandriva.org> 2.6.26.3-1.rt7.2mdv2009.0
++ Revision: 282756
+- add kernel-firmware as requires
+
+* Sat Sep 06 2008 trem <trem@mandriva.org> 2.6.26.3-1.rt7.1mdv2009.0
++ Revision: 281843
+- update to 2.6.26.3-rt7
+- update to 2.6.26.3-rt6
+
+* Thu Sep 04 2008 trem <trem@mandriva.org> 2.6.26.3-1.rt5.1mdv2009.0
++ Revision: 280813
+- update to 2.6.26.3-rt5
+- add include/trace/sched.h to source and devel
+- update to 2.6.26.3-rt4
+
+* Sat Aug 23 2008 trem <trem@mandriva.org> 2.6.26.3-1.rt3.1mdv2009.0
++ Revision: 275315
+- remove Module.markers from source rpm
+- update to 2.6.26.3-rt3
+- remove patch fix_infiniband.patch and fix_isp1760.patch
+
+* Sat Aug 16 2008 trem <trem@mandriva.org> 2.6.26-1.rt1.1mdv2009.0
++ Revision: 272608
+- fix patch disable-mrproper-in-devel-rpms.patch
+- remove sigframe_32.h from devel (this file no more exist)
+- add patch fix_infiniband.patch and fix_isp1760.patch
+- update to 2.6.26-rt1
+
+* Tue Jun 24 2008 trem <trem@mandriva.org> 2.6.25.8-1.rt7.1mdv2009.0
++ Revision: 228750
+- update to 2.6.25.8-rt7
+
+* Sun Jun 08 2008 trem <trem@mandriva.org> 2.6.25.4-1.rt6.1mdv2009.0
++ Revision: 216836
+- update to 2.6.25.4-rt3
+- disable CONFIG_RT_GROUP_SCHED (break the compilation)
+
+* Tue May 20 2008 trem <trem@mandriva.org> 2.6.25.4-1.rt3.1mdv2009.0
++ Revision: 209549
+- update to 2.6.25.4-rt3
+
+* Sun May 18 2008 trem <trem@mandriva.org> 2.6.25.4-1.rt1.1mdv2009.0
++ Revision: 208737
+- remove arch/i386 from kernel source
+- update to 2.6.25.4-rt1
+
+* Sat May 17 2008 trem <trem@mandriva.org> 2.6.24.7-1.rt6.1mdv2009.0
++ Revision: 208442
+- update to 2.6.24.7-rt6
+
+  + Thomas Backlund <tmb@mandriva.org>
+    - update to 2.6.24.4-rt4
+    - fix license
+
+* Thu Feb 28 2008 trem <trem@mandriva.org> 2.6.24.3-1.rt3.2mdv2008.1
++ Revision: 175958
+- update to 2.6.24.3-rt3
+
+* Fri Feb 22 2008 trem <trem@mandriva.org> 2.6.24.2-1.rt2.2mdv2008.1
++ Revision: 174020
+- update to 2.6.24.2-rt2
+
+* Thu Jan 31 2008 Thomas Backlund <tmb@mandriva.org> 2.6.24-1.rt1.2mdv2008.1
++ Revision: 160945
+- add kernel-sysctl_check-remove-s390-include.patch (#37388)
+
+* Sat Jan 26 2008 trem <trem@mandriva.org> 2.6.24-1.rt1.1mdv2008.1
++ Revision: 158285
+- update to 2.6.24-rt1
+
+* Thu Jan 17 2008 trem <trem@mandriva.org> 2.6.24-0.rc8.rt1.1mdv2008.1
++ Revision: 154478
+- update to 2.6.24-rc8-rt1
+
+* Sun Jan 13 2008 trem <trem@mandriva.org> 2.6.24-0.rc7.rt1.1mdv2008.1
++ Revision: 151054
+- add patch to fix quicklist.h
+- update to 2.6.24-rc7-rt1
+
+* Wed Jan 02 2008 trem <trem@mandriva.org> 2.6.24-0.rc5.rt1.2mdv2008.1
++ Revision: 140734
+- add -debug package with vmlinux file (used by oprofile, systemtap, ...)
+
+  + Thomas Backlund <tmb@mandriva.org>
+    - update source2 to apply cleanly
+    - fix kernelupdate symlink
+
+  + Olivier Blin <blino@mandriva.org>
+    - restore BuildRoot
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Sat Dec 15 2007 trem <trem@mandriva.org> 2.6.24-0.rc5.rt1.1mdv2008.1
++ Revision: 120292
+- fix compilation on i586
+- update to 2.6.24-rc5-rt1
+
+  + Thomas Backlund <tmb@mandriva.org>
+    - call installkernel with -L to avoid changing main kernel
+      default symlinks
+
+* Mon Nov 19 2007 trem <trem@mandriva.org> 2.6.24-0.rc2.rt1.3mdv2008.1
++ Revision: 110554
+- disable mrproper target on -devel rpms to stop 3rdparty installers
+  from wiping out needed files and thereby breaking builds
+  (based on an initial patch by Danny used in kernel-multimedia series)
+- fix build of kernel source
+
+* Mon Nov 19 2007 Thierry Vignaud <tv@mandriva.org> 2.6.24-0.rc2.rt1.2mdv2008.1
++ Revision: 110403
+- fix build
+
+  + trem <trem@mandriva.org>
+    - fix compilation on i586 (user %%{_arch} instead of %%{targer_cpu})
+    - update to 2.6.24-rc2-rt1
+    - add two patches to fix compilation (ioat_dma.c and kvm_main.c)
+
+* Thu Nov 08 2007 trem <trem@mandriva.org> 2.6.23.1-1.rt11.1mdv2008.1
++ Revision: 106843
+- update to 2.6.23.1-rt11
+
+* Mon Oct 29 2007 trem <trem@mandriva.org> 2.6.23.1-1.rt5.1mdv2008.1
++ Revision: 103630
+- update to 2.6.23.1-rt5
+
+* Sun Oct 28 2007 trem <trem@mandriva.org> 2.6.23.1-1.rt4.1mdv2008.1
++ Revision: 102811
+- update to 2.6.23.1-rt4
+
+* Thu Oct 25 2007 trem <trem@mandriva.org> 2.6.23-1.rt3.1mdv2008.1
++ Revision: 102207
+- update to 2.6.23-rt3
+
+* Wed Oct 24 2007 trem <trem@mandriva.org> 2.6.23-1.rt2.1mdv2008.1
++ Revision: 101903
+- update to 2.6.23-rt2
+
+* Wed Oct 17 2007 trem <trem@mandriva.org> 2.6.23-1.rt1.1mdv2008.1
++ Revision: 99735
+- now, we use 1. for stable release (we continue to use 0. for unstable release)
+- update to 2.6.23-rt1
+
+* Tue Oct 09 2007 trem <trem@mandriva.org> 2.6.23-0.rc9.rt2.2mdv2008.1
++ Revision: 96319
+- update to 2.6.23-rc9-rt2
+
+* Thu Sep 27 2007 trem <trem@mandriva.org> 2.6.23-0.rc8.rt1.2mdv2008.0
++ Revision: 93206
+- update to 2.6.23-rc8-rt1
+
+* Thu Sep 06 2007 Thomas Backlund <tmb@mandriva.org> 2.6.23-0.rc4.rt1.2mdv2008.0
++ Revision: 81324
+- rebuild as the old one got lost in the BS
+
+* Sun Sep 02 2007 Thomas Backlund <tmb@mandriva.org> 2.6.23-0.rc4.rt1.1mdv2008.0
++ Revision: 77737
+- update to kernel.org 2.6.23-rc4
+- update to 2.6.23-rc4-rt1
+- fix #29744, #29074 in a cleaner way by disabling the sourcing of
+  arch/s390/crypto/Kconfig
+- fix patch urls to match the new project repo at kernel.org
+- drop patches 3, 4
+- update defconfigs
+
+* Fri Aug 10 2007 trem <trem@mandriva.org> 2.6.23-0.rc2.rt2.1mdv2008.0
++ Revision: 61661
+- update to 2.6.23-rc2-rt2
+
+* Tue Aug 07 2007 trem <trem@mandriva.org> 2.6.22.1-rt9.2mdv2008.0
++ Revision: 59994
+- new mdv packaging (2mdv)
+- disable CONFIG_DEBUG_LOCK_ALLOC and CONFIG_PROVE_LOCKING in i386-smp.config (was forgotten)
+
+* Sat Jul 28 2007 trem <trem@mandriva.org> 2.6.22.1-rt9.1mdv2008.0
++ Revision: 56455
+- update to release 2.6.22.1-rt9
+- disable : CONFIG_CPU_IDLE, CONFIG_DEBUG_LOCK_ALLOC, CONFIG_PROVE_LOCKING
+- update to 2.6.22.1-rt6
+
+* Sun Jul 15 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.2mdv2008.0
++ Revision: 52298
+- disable LOCKDEP and DEBUG_SLAB as they are bad for latencies and runtime overhead
+- fix build when building only up or smp
+
+* Sat Jul 14 2007 Thomas Backlund <tmb@mandriva.org> 2.6.22.1-rt3.1mdv2008.0
++ Revision: 52083
+- use defconfigs from kernel-linus-2.6.22.1, and adapt them for
+  realtime build
+- dont build -doc rpms
+- Introduce Ingo Molnars kernel-rt (realtime) series
+- Created package structure for kernel-rt.
+
