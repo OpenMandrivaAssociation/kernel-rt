@@ -136,7 +136,7 @@ Release:        %{rpmrel}
 License: 	GPLv2
 Group: 		Development/Kernel
 ExclusiveArch: 	%{ix86} x86_64
-URL: 		http://www.kernel.org/
+URL: 		https://www.kernel.org/
 Summary:  The Linux Kernel
 Provides: %kprovides
 Requires: %requires1
